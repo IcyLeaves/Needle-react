@@ -1,90 +1,69 @@
 'use client'
 
-import React from 'react';
-import { Button, Flex, Segmented } from 'antd';
-import type { FlexProps, SegmentedProps } from 'antd';
-import { Col, Row } from 'antd';
 import { BookFilled, QuestionCircleFilled } from '@ant-design/icons';
-import { Layout } from 'antd';
-
+import { Button, Col, ConfigProvider, Divider, Flex, Layout, Row } from 'antd';
+import React from 'react';
+import * as styled from './style';
 const { Header, Footer, Sider, Content } = Layout;
-
-const headerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  color: '#fff',
-  height: 64,
-  paddingInline: 48,
-  lineHeight: '64px',
-  // backgroundColor: '#4096ff',
-};
-
-const contentStyle: React.CSSProperties = {
-  textAlign: 'center',
-  minHeight: 120,
-  lineHeight: '120px',
-  color: '#fff',
-  backgroundColor: '#0958d9',
-};
-
-const siderStyle: React.CSSProperties = {
-  textAlign: 'center',
-  lineHeight: '120px',
-  color: '#fff',
-  backgroundColor: '#1677ff',
-};
-
-const footerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  color: '#fff',
-  backgroundColor: '#4096ff',
-};
-
-const layoutStyle = {
-  borderRadius: 8,
-  overflow: 'hidden',
-  width: 'calc(100% - 8px)',
-};
-const rowStyle: React.CSSProperties = {
-  width: '100%'
-}
-
-const bigTitleStyle: React.CSSProperties = {
-  marginBottom: "10px",
-  fontSize: "30px",
-  fontWeight: "bold",
-  fontFamily: "Helvetica",
-}
-
-const titleIconStyle: React.CSSProperties = {
-  float: 'left',
-  margin: "10px"
-}
-
-const colCenterStyle: React.CSSProperties = {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-}
 
 const alignOptions = ['flex-start', 'center', 'flex-end'];
 
+
 const App: React.FC = () => {
+
+  const [chances, setChances] = React.useState(16);
+
   return (
-    <Layout style={layoutStyle}>
-      <Header style={headerStyle}>
-        <Flex gap="middle" align="center" justify='center' vertical>
-          <Row style={rowStyle}>
-            <Col span={3} offset={3}>
-              <Button style={titleIconStyle} size='large'><QuestionCircleFilled /></Button>
-              <Button style={titleIconStyle} size='large'><BookFilled /></Button></Col>
-            <Col span={12} style={colCenterStyle}><div style={bigTitleStyle}>Needle v3.0</div></Col>
-            <Col span={3}></Col>
+    <ConfigProvider theme={{
+      components: {
+        Layout: {
+          bodyBg: 'white',
+          headerBg: 'white',
+          headerColor: 'black'
+        },
+      },
+      token: {
+        lineWidth: 2,
+        marginLG: 8,
+      },
+    }}>
+      <Layout style={styled.layoutStyle}>
+        <Header style={styled.headerStyle}>
+          <Flex gap="middle" align="center" justify='center' vertical>
+            <Row style={styled.rowStyle}>
+              <Col span={3} offset={3}>
+                <Button style={styled.titleIconStyle} size='large'><QuestionCircleFilled /></Button>
+                <Button style={styled.titleIconStyle} size='large'><BookFilled /></Button></Col>
+              <Col span={12} style={styled.colCenterStyle}><div style={styled.bigTitleStyle}>Needle v3.0</div></Col>
+              <Col span={3}></Col>
+            </Row>
+          </Flex>
+        </Header>
+
+        <Content style={styled.contentStyle}>
+          <Divider />
+          <div style={styled.gameModeStyle} >{chances}</div>
+          <Divider />
+          <Row>
+            <Col span={6} >
+              <b style={styled.sideTitleStyle}>说明</b>
+              <div id="description-board"></div>
+            </Col>
+            <Col span={12} style={styled.midColStyle}>
+              <div id="game-board"></div>
+              <div id="chances-board"></div>
+            </Col>
+            <Col span={6} >
+            <b style={styled.sideTitleStyle}>笔记</b>
+            <div id="notes-board"></div>
+            </Col>
           </Row>
-        </Flex>
-      </Header>
-      <Content style={contentStyle}>Content</Content>
-      <Footer style={footerStyle}>Footer</Footer>
-    </Layout>
+
+        </Content>
+
+      </Layout>
+    </ConfigProvider>
+
 
   );
 };
