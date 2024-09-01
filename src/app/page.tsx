@@ -1,7 +1,9 @@
 'use client';
 
 import { SpotBox } from '@/components/css/component';
-import CitizenInfo from '@/components/roles/citizen/citizen';
+import Citizen from '@/components/roles/citizen/citizen';
+import Detective from '@/components/roles/detective/detective';
+import Target from '@/components/roles/target/target';
 import { BookFilled, QuestionCircleFilled } from '@ant-design/icons';
 import {
     Button,
@@ -14,6 +16,7 @@ import {
     Row,
 } from 'antd';
 import React from 'react';
+import RoleInfoCard from '../components/public/role';
 import * as styled from './style';
 const { Header, Footer, Sider, Content } = Layout;
 const alignOptions = ['flex-start', 'center', 'flex-end'];
@@ -140,7 +143,9 @@ const App: React.FC = () => {
                                 id="description-board"
                                 style={styled.sideColStyle}
                             >
-                                <CitizenInfo />
+                                <RoleInfoCard role={Citizen} />
+                                <RoleInfoCard role={Detective} />
+                                <RoleInfoCard role={Target} />
                             </div>
                         </Col>
                         <Col span={12} style={styled.midColStyle}>

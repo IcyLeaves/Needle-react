@@ -71,6 +71,10 @@ const gameModeStyle: React.CSSProperties = {
 
 const sideTitleStyle: React.CSSProperties = {
     fontSize: '20px',
+    padding: '20px 0',
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
 };
 
 const midColStyle: React.CSSProperties = {
