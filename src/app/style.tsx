@@ -1,4 +1,3 @@
-
 const headerStyle: React.CSSProperties = {
     textAlign: 'center',
     height: 64,
@@ -8,9 +7,9 @@ const headerStyle: React.CSSProperties = {
 };
 
 const contentStyle: React.CSSProperties = {
-    textAlign: 'center',
-    minHeight: 120,
-    lineHeight: '120px',
+    // textAlign: 'center',
+    // minHeight: 120,
+    // lineHeight: '120px',
 };
 
 const siderStyle: React.CSSProperties = {
@@ -33,26 +32,26 @@ const layoutStyle = {
 };
 
 const rowStyle: React.CSSProperties = {
-    width: '100%'
-}
+    width: '100%',
+};
 
 const bigTitleStyle: React.CSSProperties = {
-    marginBottom: "10px",
-    fontSize: "30px",
-    fontWeight: "bold",
-    fontFamily: "Helvetica",
-}
+    marginBottom: '10px',
+    fontSize: '30px',
+    fontWeight: 'bold',
+    fontFamily: 'Helvetica',
+};
 
 const titleIconStyle: React.CSSProperties = {
     float: 'left',
-    margin: "10px"
-}
+    margin: '10px',
+};
 
 const colCenterStyle: React.CSSProperties = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-}
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+};
 
 const gameModeStyle: React.CSSProperties = {
     // position: "absolute",
@@ -68,15 +67,36 @@ const gameModeStyle: React.CSSProperties = {
     justifyContent: 'center',
     alignItems: 'center',
     cursor: 'default',
-}
+};
 
 const sideTitleStyle: React.CSSProperties = {
     fontSize: '20px',
-}
+};
 
 const midColStyle: React.CSSProperties = {
     borderLeft: 'rgba(128, 128, 128, 0.25) 1px solid',
     borderRight: 'rgba(128, 128, 128, 0.25) 1px solid',
-}
+};
 
-export { headerStyle, contentStyle, siderStyle, footerStyle, layoutStyle, rowStyle, bigTitleStyle, titleIconStyle, colCenterStyle, gameModeStyle, sideTitleStyle,midColStyle }
+const sideColStyle: React.CSSProperties = {
+    // display: flex;
+    // flex-direction: column;
+    display: 'flex',
+    flexDirection: 'column',
+};
+
+export {
+    bigTitleStyle,
+    colCenterStyle,
+    contentStyle,
+    footerStyle,
+    gameModeStyle,
+    headerStyle,
+    layoutStyle,
+    midColStyle,
+    rowStyle,
+    sideColStyle,
+    sideTitleStyle,
+    siderStyle,
+    titleIconStyle,
+};
