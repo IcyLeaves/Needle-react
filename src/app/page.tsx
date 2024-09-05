@@ -1,6 +1,5 @@
 'use client';
 
-import { SpotBox } from '@/components/css/component';
 import Citizen from '@/components/roles/citizen/citizen';
 import Detective from '@/components/roles/detective/detective';
 import Target from '@/components/roles/target/target';
@@ -16,48 +15,22 @@ import {
     Row,
 } from 'antd';
 import React from 'react';
-import RoleInfoCard from '../components/public/role';
+import Board from '../components/public/board';
+import { RoleInfoCard } from '../components/public/role';
+import Augur from '../components/roles/augur/augur';
+import BangBang from '../components/roles/bangbang/bangbang';
+import Copies from '../components/roles/copies/copies';
+import Fortune from '../components/roles/fortune/fortune';
+import Ganster from '../components/roles/ganster/ganster';
+import Jam from '../components/roles/jam/jam';
+import Killer from '../components/roles/killer/killer';
+import Reporter from '../components/roles/reporter/reporter';
+import Sheriff from '../components/roles/sheriff/sheriff';
+import Volunteer from '../components/roles/volunteer/volunteer';
+import Witch from '../components/roles/witch/witch';
 import * as styled from './style';
 const { Header, Footer, Sider, Content } = Layout;
 const alignOptions = ['flex-start', 'center', 'flex-end'];
-
-const Board: React.FC = () => {
-    let board = <></>;
-    const rows = 8;
-    const cols = 8;
-    const rowTpl = <Row></Row>;
-    const colTpl = (
-        <Col span={3}>
-            <SpotBox />
-        </Col>
-    );
-    for (let i = 0; i < rows; i++) {
-        let tempRow = <> </>;
-        for (let j = 0; j < cols; j++) {
-            tempRow = (
-                <>
-                    {tempRow}
-                    {colTpl}
-                </>
-            );
-        }
-        board = (
-            <>
-                <Row>{tempRow}</Row>
-                {board}
-            </>
-        );
-    }
-    let boardContainerCss: React.CSSProperties = {
-        display: 'flex',
-        alignItems: 'center',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        backgroundColor: 'white',
-        width: `calc(${cols}* 3rem + ${cols}* 8px)`,
-    };
-    return <div style={boardContainerCss}>{board}</div>;
-};
 
 const Chance: React.FC = () => {
     return <div>🔍 × 11</div>;
@@ -149,7 +122,28 @@ const App: React.FC = () => {
                             </div>
                         </Col>
                         <Col span={12} style={styled.midColStyle}>
-                            <Board />
+                            <Board
+                                config={{
+                                    rows: 8,
+                                    cols: 8,
+                                    roleMap: {
+                                        [Target.id]: 1,
+                                        [Citizen.id]: 13,
+                                        [Detective.id]: 12,
+                                        [Jam.id]: 5,
+                                        [Witch.id]: 3,
+                                        [Sheriff.id]: 5,
+                                        [Killer.id]: 3,
+                                        [Augur.id]: 3,
+                                        [Volunteer.id]: 3,
+                                        [Copies.id]: 2,
+                                        [Reporter.id]: 5,
+                                        [Fortune.id]: 3,
+                                        [Ganster.id]: 3,
+                                        [BangBang.id]: 3,
+                                    },
+                                }}
+                            />
                             <Chance />
                         </Col>
                         <Col span={6}>

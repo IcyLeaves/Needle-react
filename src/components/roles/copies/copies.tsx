@@ -1,6 +1,7 @@
 import Role from '../../../models/role';
 
 const Copies: Role = {
+    id: 'copies',
     name: '替身',
     description:
         '目标将要现身时，会和目标交换位置并代替他现身。如果是这样，标出目标的方位',

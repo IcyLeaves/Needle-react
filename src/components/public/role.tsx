@@ -36,4 +36,4 @@ const RoleInfoCard: React.FC<{ role: Role }> = props => {
     );
 };
 
-export default RoleInfoCard;
+export { RoleBox, RoleInfoCard };
