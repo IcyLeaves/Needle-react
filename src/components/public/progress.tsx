@@ -1,6 +1,7 @@
 import { Col, Flex, Progress, Row } from 'antd';
 import str2role from '../roles/roles';
 import { BoardConfig } from './board';
+import { RoleLabel } from './role';
 const Note: React.FC = () => {
     return (
         <Flex gap="small" vertical>
@@ -39,13 +40,7 @@ const FoundProgress: React.FC<{ config: BoardConfig }> = props => {
                     }}
                 >
                     <Col span={6}>
-                        <span
-                            style={{
-                                color: `${str2role(key).color}`,
-                            }}
-                        >
-                            <b>{str2role(key).name}</b>
-                        </span>
+                        <RoleLabel role={str2role(key)} />
                     </Col>
                     <Col span={18}>
                         <Progress

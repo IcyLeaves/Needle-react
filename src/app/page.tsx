@@ -8,7 +8,7 @@ import { Button, Col, ConfigProvider, Divider, Flex, Layout, Row } from 'antd';
 import React from 'react';
 import Board from '../components/public/board';
 import FoundProgress from '../components/public/progress';
-import { RoleInfoCard } from '../components/public/role';
+import  RoleInfoCard  from '../components/public/infocard';
 import Augur from '../components/roles/augur/augur';
 import BangBang from '../components/roles/bangbang/bangbang';
 import Copies from '../components/roles/copies/copies';
