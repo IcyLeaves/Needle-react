@@ -2,7 +2,7 @@ import { Col, Row } from 'antd';
 import Role from '../../models/role';
 import str2role from '../roles/roles';
 import { RoleBox } from './role';
-type BoardConfig = {
+export type BoardConfig = {
     rows: number;
     cols: number;
     roleMap: Record<string, number>;

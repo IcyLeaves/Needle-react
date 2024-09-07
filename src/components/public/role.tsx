@@ -21,7 +21,11 @@ const RoleInfoCard: React.FC<{ role: Role }> = props => {
 
     return (
         <>
-            <Card>
+            <Card
+                style={{
+                    margin: '10px',
+                }}
+            >
                 <Row>
                     <Col span={8}>
                         <RoleBox role={role} />

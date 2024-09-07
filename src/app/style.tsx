@@ -80,6 +80,10 @@ const sideTitleStyle: React.CSSProperties = {
 const midColStyle: React.CSSProperties = {
     borderLeft: 'rgba(128, 128, 128, 0.25) 1px solid',
     borderRight: 'rgba(128, 128, 128, 0.25) 1px solid',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
 };
 
 const sideColStyle: React.CSSProperties = {
