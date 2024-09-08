@@ -1,32 +1,20 @@
 import { Col, Row } from 'antd';
+import Deck from '../../utils/draw';
 import Role from '../../models/role';
+import { SpotBox, SpotStatus, SpotVisible } from '../../models/spot';
 import str2role from '../roles/roles';
-import { RoleBox } from './role';
-import Deck from '../../methods/draw';
 export type BoardConfig = {
     rows: number;
     cols: number;
     roleMap: Record<string, number>;
 };
 
-const InitSpotbox = (role: Role) => {
-    return <RoleBox role={role}></RoleBox>;
-};
-
-const Board: React.FC<{ config: BoardConfig }> = props => {
-    const { config } = props;
-    let board = <></>;
-    const rows = config.rows || 8;
-    const cols = config.cols || 8;
-    // init RoleDeck
-    let deck = [];
-    for (var key in config.roleMap) {
-        var value = config.roleMap[key];
-        for (var i = 0; i < value; i++) {
-            deck.push(str2role(key));
-        }
-    }
-    const roleDeck = new Deck<Role>(deck);
+const InitSpotBoard = (
+    rows: number,
+    cols: number,
+    deck: Deck<Role>,
+): JSX.Element => {
+    let board = <> </>;
     for (let i = 0; i < rows; i++) {
         let tempRow = <> </>;
         for (let j = 0; j < cols; j++) {
@@ -34,7 +22,13 @@ const Board: React.FC<{ config: BoardConfig }> = props => {
                 <>
                     {tempRow}
                     <Col span={(24 - cols) / cols + 1}>
-                        {InitSpotbox(roleDeck.draw()!)}
+                        <SpotBox
+                            role={deck.draw()!}
+                            x={i}
+                            y={j}
+                            visible={SpotVisible.HIDDEN}
+                            status={SpotStatus.IDLE}
+                        />
                     </Col>
                 </>
             );
@@ -46,6 +40,30 @@ const Board: React.FC<{ config: BoardConfig }> = props => {
             </>
         );
     }
+    return board;
+};
+
+const InitSpotDeck = (config: BoardConfig): Deck<Role> => {
+    let deck = [];
+    for (var key in config.roleMap) {
+        let value = config.roleMap[key];
+        for (var i = 0; i < value; i++) {
+            let spot: Role = str2role(key);
+            deck.push(spot);
+        }
+    }
+    return new Deck<Role>(deck);
+};
+
+const Board: React.FC<{ config: BoardConfig }> = props => {
+    const { config } = props;
+    // params
+    const rows = config.rows || 8;
+    const cols = config.cols || 8;
+    // init
+    const spotDeck = InitSpotDeck(config);
+    let board = InitSpotBoard(rows, cols, spotDeck);
+
     let boardContainerCss: React.CSSProperties = {
         display: 'flex',
         alignItems: 'center',

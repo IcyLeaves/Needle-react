@@ -1,6 +1,7 @@
 import { Card, Col, Row } from 'antd';
 import Role from '../../models/role';
-import { RoleBox, RoleLabel } from './role';
+import { SpotBox, SpotStatus, SpotVisible } from '../../models/spot';
+import { RoleLabel } from './role';
 
 const RoleInfoCard: React.FC<{ role: Role }> = props => {
     const { role } = props;
@@ -23,7 +24,13 @@ const RoleInfoCard: React.FC<{ role: Role }> = props => {
                                     alignItems: 'center',
                                 }}
                             >
-                                <RoleBox role={role} />
+                                <SpotBox
+                                    role={role}
+                                    x={0}
+                                    y={0}
+                                    visible={SpotVisible.REVEALED}
+                                    status={SpotStatus.LOCKED}
+                                />
                             </Col>
                             <Col span={18}>
                                 <RoleLabel role={role} />

@@ -34,3 +34,46 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Tutorial
+
+### Write a React Component
+
+```typescript
+import { Component, MouseEventHandler } from 'react';
+
+type CounterState = {
+    count: number;
+};
+
+type CounterProps = {};
+class Counter extends Component<CounterProps, CounterState> {
+    constructor(props: CounterProps) {
+        super(props);
+        this.state = {
+            count: 0,
+        };
+    }
+
+    handleClick: MouseEventHandler<HTMLButtonElement> | undefined = (
+        event: any,
+    ) => {
+        console.log(event);
+        this.setState((prevState: any) => ({
+            count: prevState.count + 1,
+        }));
+    };
+
+    render() {
+        return (
+            <div>
+                <p>Count: {this.state.count}</p>
+                <button onClick={this.handleClick}>Increment</button>
+            </div>
+        );
+    }
+}
+
+export default Counter;
+
+```
