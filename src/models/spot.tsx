@@ -41,6 +41,10 @@ type SpotBoxProps = {
     visible: SpotVisible;
     // status: IDLE, LOCKED
     status: SpotStatus;
+
+    // From Board
+    chances: number;
+    fnSetChances: any;
 };
 class SpotBox extends Component<SpotBoxProps, SpotBoxState> {
     constructor(props: SpotBoxProps) {
@@ -59,6 +63,7 @@ class SpotBox extends Component<SpotBoxProps, SpotBoxState> {
         this.setState({
             visible: SpotVisible.REVEALED,
         });
+        this.props.fnSetChances(this.props.chances - 1);
     };
 
     render() {

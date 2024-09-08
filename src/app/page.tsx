@@ -24,8 +24,9 @@ import * as styled from './style';
 const { Header, Footer, Sider, Content } = Layout;
 const alignOptions = ['flex-start', 'center', 'flex-end'];
 
-const Chance: React.FC = () => {
-    return <div style={{ marginTop: 20 }}>🔍 × 11</div>;
+const Chance: React.FC<{ chance: number }> = props => {
+    const { chance } = props;
+    return <div style={{ marginTop: 20 }}>🔍 × {chance}</div>;
 };
 
 const App: React.FC = () => {
@@ -112,8 +113,12 @@ const App: React.FC = () => {
                             </div>
                         </Col>
                         <Col span={12} style={styled.midColStyle}>
-                            <Board config={boardConfig} />
-                            <Chance />
+                            <Board
+                                config={boardConfig}
+                                chances={chances}
+                                setChances={setChances}
+                            />
+                            <Chance chance={chances} />
                         </Col>
                         <Col span={6}>
                             <b style={styled.sideTitleStyle}>笔记</b>

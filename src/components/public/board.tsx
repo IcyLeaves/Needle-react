@@ -1,7 +1,7 @@
 import { Col, Row } from 'antd';
-import Deck from '../../utils/draw';
 import Role from '../../models/role';
 import { SpotBox, SpotStatus, SpotVisible } from '../../models/spot';
+import Deck from '../../utils/draw';
 import str2role from '../roles/roles';
 export type BoardConfig = {
     rows: number;
@@ -13,6 +13,8 @@ const InitSpotBoard = (
     rows: number,
     cols: number,
     deck: Deck<Role>,
+    chances: any,
+    setChances: any,
 ): JSX.Element => {
     let board = <> </>;
     for (let i = 0; i < rows; i++) {
@@ -28,6 +30,8 @@ const InitSpotBoard = (
                             y={j}
                             visible={SpotVisible.HIDDEN}
                             status={SpotStatus.IDLE}
+                            chances={chances}
+                            fnSetChances={setChances}
                         />
                     </Col>
                 </>
@@ -55,14 +59,18 @@ const InitSpotDeck = (config: BoardConfig): Deck<Role> => {
     return new Deck<Role>(deck);
 };
 
-const Board: React.FC<{ config: BoardConfig }> = props => {
-    const { config } = props;
+const Board: React.FC<{
+    config: BoardConfig;
+    chances: any;
+    setChances: any;
+}> = props => {
+    const { config, chances, setChances } = props;
     // params
     const rows = config.rows || 8;
     const cols = config.cols || 8;
     // init
     const spotDeck = InitSpotDeck(config);
-    let board = InitSpotBoard(rows, cols, spotDeck);
+    let board = InitSpotBoard(rows, cols, spotDeck, chances, setChances);
 
     let boardContainerCss: React.CSSProperties = {
         display: 'flex',
