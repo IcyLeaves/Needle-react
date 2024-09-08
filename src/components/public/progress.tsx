@@ -2,28 +2,6 @@ import { Col, Flex, Progress, Row } from 'antd';
 import str2role from '../roles/roles';
 import { BoardConfig } from './board';
 import { RoleLabel } from './role';
-const Note: React.FC = () => {
-    return (
-        <Flex gap="small" vertical>
-            <Row>
-                <Col span={6}>目标</Col>
-                <Col span={18}>
-                    <Progress />
-                </Col>
-            </Row>
-            <Row>
-                <Col span={6}>警长</Col>
-                <Col span={18}>
-                    <Progress
-                        strokeColor={'#5d4037'}
-                        percent={100 / 5}
-                        format={() => '0 / 5'}
-                    />
-                </Col>
-            </Row>
-        </Flex>
-    );
-};
 
 const FoundProgress: React.FC<{ config: BoardConfig }> = props => {
     const { config } = props;
