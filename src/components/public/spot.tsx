@@ -29,6 +29,13 @@ class SpotBox extends Component<SpotBoxProps, SpotBoxState> {
             return;
         }
 
+        if (this.props.gameState.chances === 0) {
+            return;
+        }
+
+        if (this.state.visible === SpotVisible.REVEALED) {
+            return;
+        }
         let spots = this.props.gameState.spots;
         spots[this.state.x][this.state.y].visible = SpotVisible.REVEALED;
 
