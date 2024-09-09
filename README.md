@@ -58,7 +58,6 @@ class Counter extends Component<CounterProps, CounterState> {
     handleClick: MouseEventHandler<HTMLButtonElement> | undefined = (
         event: any,
     ) => {
-        console.log(event);
         this.setState((prevState: any) => ({
             count: prevState.count + 1,
         }));

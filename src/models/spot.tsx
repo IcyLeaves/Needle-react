@@ -1,9 +1,5 @@
-import { Component, MouseEventHandler } from 'react';
-import {
-    SpotBoxColorCss,
-    SpotBoxCss,
-    SpotBoxVisibleCss,
-} from '../components/css/spot';
+import { Dispatch } from 'react';
+import { GameState } from '../components/public/game';
 import Role from './role';
 
 enum SpotVisible {
@@ -42,42 +38,8 @@ type SpotBoxProps = {
     // status: IDLE, LOCKED
     status: SpotStatus;
 
-    // From Board
-    chances: number;
-    fnSetChances: any;
+    gameState: GameState;
+    setGameState: Dispatch<GameState>;
 };
-class SpotBox extends Component<SpotBoxProps, SpotBoxState> {
-    constructor(props: SpotBoxProps) {
-        super(props);
-        const { role, x, y, visible, status } = props;
-        this.state = {
-            x: x,
-            y: y,
-            role: role,
-            visible: visible,
-            status: status,
-        };
-    }
-
-    handleClick: MouseEventHandler<HTMLElement> | undefined = (event: any) => {
-        this.setState({
-            visible: SpotVisible.REVEALED,
-        });
-        this.props.fnSetChances(this.props.chances - 1);
-    };
-
-    render() {
-        return (
-            <div
-                onClick={this.handleClick}
-                style={Object.assign(
-                    SpotBoxColorCss(this.state.role),
-                    SpotBoxVisibleCss(this.state.visible),
-                    SpotBoxCss,
-                )}
-            ></div>
-        );
-    }
-}
-
-export { SpotBox, SpotStatus, SpotVisible };
+export { SpotStatus, SpotVisible };
+export type { SpotBoxProps, SpotBoxState };

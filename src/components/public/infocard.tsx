@@ -1,10 +1,16 @@
+import Role from '@/models/role';
+import { SpotStatus, SpotVisible } from '@/models/spot';
 import { Card, Col, Row } from 'antd';
-import Role from '../../models/role';
-import { SpotBox, SpotStatus, SpotVisible } from '../../models/spot';
+import { Dispatch } from 'react';
+import { GameState } from './game';
 import { RoleLabel } from './role';
-
-const RoleInfoCard: React.FC<{ role: Role }> = props => {
-    const { role } = props;
+import { SpotBox } from './spot';
+const RoleInfoCard: React.FC<{
+    role: Role;
+    gameState: GameState;
+    setGameState: Dispatch<GameState>;
+}> = props => {
+    const { role, gameState, setGameState } = props;
 
     return (
         <>
@@ -30,6 +36,8 @@ const RoleInfoCard: React.FC<{ role: Role }> = props => {
                                     y={0}
                                     visible={SpotVisible.REVEALED}
                                     status={SpotStatus.LOCKED}
+                                    gameState={gameState}
+                                    setGameState={setGameState}
                                 />
                             </Col>
                             <Col span={18}>

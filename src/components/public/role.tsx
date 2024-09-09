@@ -1,5 +1,5 @@
+import Role from '@/models/role';
 import React from 'react';
-import Role from '../../models/role';
 
 const RoleLabel: React.FC<{ role: Role }> = props => {
     const { role } = props;

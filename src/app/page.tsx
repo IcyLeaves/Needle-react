@@ -6,9 +6,7 @@ import Target from '@/components/roles/target/target';
 import { BookFilled, QuestionCircleFilled } from '@ant-design/icons';
 import { Button, Col, ConfigProvider, Divider, Flex, Layout, Row } from 'antd';
 import React from 'react';
-import Board from '../components/public/board';
-import RoleInfoCard from '../components/public/infocard';
-import FoundProgress from '../components/public/progress';
+import { Game } from '../components/public/game';
 import Augur from '../components/roles/augur/augur';
 import BangBang from '../components/roles/bangbang/bangbang';
 import Copies from '../components/roles/copies/copies';
@@ -24,16 +22,11 @@ import * as styled from './style';
 const { Header, Footer, Sider, Content } = Layout;
 const alignOptions = ['flex-start', 'center', 'flex-end'];
 
-const Chance: React.FC<{ chance: number }> = props => {
-    const { chance } = props;
-    return <div style={{ marginTop: 20 }}>🔍 × {chance}</div>;
-};
-
 const App: React.FC = () => {
-    const [chances, setChances] = React.useState(16);
     const boardConfig = {
         rows: 8,
         cols: 8,
+        chances: 16,
         roleMap: {
             [Target.id]: 1,
             [Citizen.id]: 13,
@@ -98,35 +91,7 @@ const App: React.FC = () => {
 
                 <Content style={styled.contentStyle}>
                     <Divider />
-                    <div style={styled.gameModeStyle}>{chances}</div>
-                    <Divider />
-                    <Row>
-                        <Col span={6}>
-                            <b style={styled.sideTitleStyle}>说明</b>
-                            <div
-                                id="description-board"
-                                style={styled.sideColStyle}
-                            >
-                                <RoleInfoCard role={Citizen} />
-                                <RoleInfoCard role={Detective} />
-                                <RoleInfoCard role={Target} />
-                            </div>
-                        </Col>
-                        <Col span={12} style={styled.midColStyle}>
-                            <Board
-                                config={boardConfig}
-                                chances={chances}
-                                setChances={setChances}
-                            />
-                            <Chance chance={chances} />
-                        </Col>
-                        <Col span={6}>
-                            <b style={styled.sideTitleStyle}>笔记</b>
-                            <Flex gap="small" vertical>
-                                <FoundProgress config={boardConfig} />
-                            </Flex>
-                        </Col>
-                    </Row>
+                    <Game config={boardConfig} />
                 </Content>
             </Layout>
         </ConfigProvider>
