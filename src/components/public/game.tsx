@@ -1,8 +1,5 @@
 import * as styled from '@/app/style';
 import FoundProgress from '@/components/public/note';
-import Citizen from '@/components/roles/citizen/citizen';
-import Detective from '@/components/roles/detective/detective';
-import Target from '@/components/roles/target/target';
 import { Col, Divider, Flex, Row } from 'antd';
 import React, { useState } from 'react';
 import Role from '../../models/role';
@@ -10,7 +7,7 @@ import { SpotBoxState, SpotStatus, SpotVisible } from '../../models/spot';
 import Deck from '../../utils/draw';
 import str2role from '../roles/roles';
 import Board from './board';
-import RoleInfoCard from './infocard';
+import { Info } from './info';
 
 type GameProps = {
     config: GameConfig;
@@ -72,6 +69,7 @@ const Game: React.FC<GameProps> = ({ config }) => {
         chances: config.chances,
         spots: InitSpotStates(InitSpotDeck(config), config),
     });
+    const [infoRoles, setInfoRoles] = useState<Role[]>([]);
 
     const { chances } = state;
 
@@ -83,25 +81,16 @@ const Game: React.FC<GameProps> = ({ config }) => {
                 <Col span={6}>
                     <b style={styled.sideTitleStyle}>说明</b>
                     <div id="description-board" style={styled.sideColStyle}>
-                        <RoleInfoCard
-                            role={Citizen}
-                            gameState={state}
-                            setGameState={setState}
-                        />
-                        <RoleInfoCard
-                            role={Detective}
-                            gameState={state}
-                            setGameState={setState}
-                        />
-                        <RoleInfoCard
-                            role={Target}
-                            gameState={state}
-                            setGameState={setState}
-                        />
+                        <Info roles={infoRoles} />
                     </div>
                 </Col>
                 <Col span={12} style={styled.midColStyle}>
-                    <Board gameState={state} setGameState={setState} />
+                    <Board
+                        gameState={state}
+                        setGameState={setState}
+                        setInfoRoles={setInfoRoles}
+                        infoRoles={infoRoles}
+                    />
                     <Chance chance={chances} />
                 </Col>
                 <Col span={6}>

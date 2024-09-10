@@ -1,16 +1,25 @@
 import Role from '@/models/role';
 import { SpotStatus, SpotVisible } from '@/models/spot';
 import { Card, Col, Row } from 'antd';
-import { Dispatch } from 'react';
-import { GameState } from './game';
 import { RoleLabel } from './role';
 import { SpotBox } from './spot';
+
+const Info: React.FC<{
+    roles: Role[];
+}> = props => {
+    const { roles } = props;
+    return (
+        <>
+            {roles.map(role => (
+                <RoleInfoCard key={role.id} role={role} />
+            ))}
+        </>
+    );
+};
 const RoleInfoCard: React.FC<{
     role: Role;
-    gameState: GameState;
-    setGameState: Dispatch<GameState>;
 }> = props => {
-    const { role, gameState, setGameState } = props;
+    const { role } = props;
 
     return (
         <>
@@ -36,8 +45,6 @@ const RoleInfoCard: React.FC<{
                                     y={0}
                                     visible={SpotVisible.REVEALED}
                                     status={SpotStatus.LOCKED}
-                                    gameState={gameState}
-                                    setGameState={setGameState}
                                 />
                             </Col>
                             <Col span={18}>
@@ -52,4 +59,4 @@ const RoleInfoCard: React.FC<{
     );
 };
 
-export default RoleInfoCard;
+export { Info };

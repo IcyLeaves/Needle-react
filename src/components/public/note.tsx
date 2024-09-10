@@ -65,21 +65,18 @@ const FoundProgress: React.FC<{ gameState: GameState }> = props => {
         Ganster.id,
         BangBang.id,
     ];
-    for (let key of roleMapKeysKeys) {
-        console.log(key);
-        let value = roleMap[key];
-        res = (
-            <>
-                {res}
+    return (
+        <>
+            {roleMapKeysKeys.map(key => (
                 <Note
+                    key={key}
                     role={str2role(key)}
-                    found={value.found}
-                    total={value.total}
+                    found={roleMap[key].found}
+                    total={roleMap[key].total}
                 />
-            </>
-        );
-    }
-    return <>{res}</>;
+            ))}
+        </>
+    );
 };
 
 const Note: React.FC<{ role: Role; found: number; total: number }> = props => {

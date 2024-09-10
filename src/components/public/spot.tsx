@@ -11,9 +11,14 @@ import {
     SpotVisible,
 } from '../../models/spot';
 
-interface Props extends SpotBoxProps {}
-
-const SpotBox: React.FC<Props> = props => {
+const isLocked = (props: SpotBoxProps, state: SpotBoxState) => {
+    return (
+        state.status === SpotStatus.LOCKED ||
+        props.gameState === undefined ||
+        props.setGameState === undefined
+    );
+};
+const SpotBox: React.FC<SpotBoxProps> = props => {
     const [state, setState] = useState<SpotBoxState>({
         x: props.x,
         y: props.y,
@@ -23,11 +28,11 @@ const SpotBox: React.FC<Props> = props => {
     });
 
     const handleClick = (event: any) => {
-        if (state.status === SpotStatus.LOCKED) {
+        if (isLocked(props, state)) {
             return;
         }
-
-        if (props.gameState.chances === 0) {
+        let gameState = props.gameState!;
+        if (gameState.chances === 0) {
             return;
         }
 
@@ -35,24 +40,47 @@ const SpotBox: React.FC<Props> = props => {
             return;
         }
 
-        const spots = props.gameState.spots;
+        const spots = gameState.spots;
         spots[state.x][state.y].visible = SpotVisible.REVEALED;
 
-        props.setGameState({
+        props.setGameState!({
             spots: spots,
-            chances: props.gameState.chances - 1,
+            chances: gameState.chances - 1,
         });
     };
 
+    const handleMouseEnter = (event: any) => {
+        if (isLocked(props, state) || !props.setInfoRoles) {
+            return;
+        }
+        if (state.visible === SpotVisible.HIDDEN) {
+            props.setInfoRoles([]);
+            return;
+        }
+        props.setInfoRoles([state.role]);
+    };
+
+    const handleMouseLeave = (event: any) => {
+        if (isLocked(props, state) || !props.setInfoRoles) {
+            return;
+        }
+
+        props.setInfoRoles([]);
+    };
     useEffect(() => {
+        if (isLocked(props, state)) {
+            return;
+        }
         if (state.status === SpotStatus.IDLE) {
-            setState(props.gameState.spots[state.x][state.y]);
+            setState(props.gameState!.spots[state.x][state.y]);
         }
     }, [state]);
 
     return (
         <div
             onClick={handleClick}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             style={{
                 ...SpotBoxColorCss(state.role),
                 ...SpotBoxVisibleCss(state.visible),

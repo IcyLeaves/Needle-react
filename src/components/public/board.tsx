@@ -1,5 +1,6 @@
 import { Col, Row } from 'antd';
 import { Dispatch } from 'react';
+import Role from '../../models/role';
 import { SpotBoxState } from '../../models/spot';
 import { GameState } from './game';
 import { SpotBox } from './spot';
@@ -15,44 +16,39 @@ const renderSpotBoard = (
     spots: SpotBoxState[][],
     gameState: GameState,
     setGameState: Dispatch<GameState>,
+    infoRoles: Role[],
+    setInfoRoles: Dispatch<Role[]>,
 ): JSX.Element => {
-    let board = <> </>;
-    for (let i = 0; i < rows; i++) {
-        let tempRow = <> </>;
-        for (let j = 0; j < cols; j++) {
-            let spot = spots[i][j];
-
-            tempRow = (
-                <>
-                    {tempRow}
-                    <Col span={(24 - cols) / cols + 1}>
-                        <SpotBox
-                            role={spot.role}
-                            x={i}
-                            y={j}
-                            visible={spot.visible}
-                            status={spot.status}
-                            gameState={gameState}
-                            setGameState={setGameState}
-                        />
-                    </Col>
-                </>
-            );
-        }
-        board = (
-            <>
-                {board}
-                <Row>{tempRow}</Row>
-            </>
-        );
-    }
-
-    return board;
+    return (
+        <>
+            {Array.from({ length: rows }, (_, i) => (
+                <Row key={i}>
+                    {Array.from({ length: cols }, (_, j) => (
+                        <Col span={(24 - cols) / cols + 1} key={j}>
+                            <SpotBox
+                                role={spots[i][j].role}
+                                x={i}
+                                y={j}
+                                visible={spots[i][j].visible}
+                                status={spots[i][j].status}
+                                gameState={gameState}
+                                setGameState={setGameState}
+                                infoRoles={infoRoles}
+                                setInfoRoles={setInfoRoles}
+                            />
+                        </Col>
+                    ))}
+                </Row>
+            ))}
+        </>
+    );
 };
 
 const Board: React.FC<{
     gameState: GameState;
     setGameState: Dispatch<GameState>;
+    infoRoles: Role[];
+    setInfoRoles: Dispatch<Role[]>;
 }> = props => {
     const { gameState, setGameState } = props;
 
@@ -65,6 +61,8 @@ const Board: React.FC<{
         gameState.spots,
         gameState,
         setGameState,
+        props.infoRoles,
+        props.setInfoRoles,
     );
 
     let boardContainerCss: React.CSSProperties = {

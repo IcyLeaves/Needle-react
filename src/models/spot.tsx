@@ -38,8 +38,11 @@ type SpotBoxProps = {
     // status: IDLE, LOCKED
     status: SpotStatus;
 
-    gameState: GameState;
-    setGameState: Dispatch<GameState>;
+    gameState?: GameState;
+    setGameState?: Dispatch<GameState>;
+
+    infoRoles?: Role[];
+    setInfoRoles?: Dispatch<Role[]>;
 };
 export { SpotStatus, SpotVisible };
 export type { SpotBoxProps, SpotBoxState };
