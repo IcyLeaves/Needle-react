@@ -4,24 +4,21 @@ import Citizen from '@/components/roles/citizen/citizen';
 import Detective from '@/components/roles/detective/detective';
 import Target from '@/components/roles/target/target';
 import { Col, Divider, Flex, Row } from 'antd';
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Role from '../../models/role';
 import { SpotBoxState, SpotStatus, SpotVisible } from '../../models/spot';
 import Deck from '../../utils/draw';
 import str2role from '../roles/roles';
 import Board from './board';
 import RoleInfoCard from './infocard';
+
 type GameProps = {
     config: GameConfig;
 };
+
 type GameState = {
     chances: number;
     spots: SpotBoxState[][];
-};
-
-const Chance: React.FC<{ chance: number }> = props => {
-    const { chance } = props;
-    return <div style={{ marginTop: 20 }}>🔍 × {chance}</div>;
 };
 
 type GameConfig = {
@@ -31,6 +28,11 @@ type GameConfig = {
     roleMap: {
         [x: string]: number;
     };
+};
+
+const Chance: React.FC<{ chance: number }> = props => {
+    const { chance } = props;
+    return <div style={{ marginTop: 20 }}>🔍 × {chance}</div>;
 };
 
 const InitSpotDeck = (config: GameConfig): Deck<Role> => {
@@ -65,62 +67,53 @@ const InitSpotStates = (
     return res;
 };
 
-class Game extends Component<GameProps, GameState> {
-    constructor(props: GameProps) {
-        super(props);
-        const { config } = props;
-        let deck = InitSpotDeck(config);
-        this.state = {
-            chances: config.chances,
-            spots: InitSpotStates(deck, config),
-        };
-        this.setState = this.setState.bind(this);
-    }
+const Game: React.FC<GameProps> = ({ config }) => {
+    const [state, setState] = useState<GameState>({
+        chances: config.chances,
+        spots: InitSpotStates(InitSpotDeck(config), config),
+    });
 
-    render() {
-        const { chances } = this.state;
-        return (
-            <>
-                <div style={styled.gameModeStyle}>{chances}</div>
-                <Divider />
-                <Row>
-                    <Col span={6}>
-                        <b style={styled.sideTitleStyle}>说明</b>
-                        <div id="description-board" style={styled.sideColStyle}>
-                            <RoleInfoCard
-                                role={Citizen}
-                                gameState={this.state}
-                                setGameState={this.setState}
-                            />
-                            <RoleInfoCard
-                                role={Detective}
-                                gameState={this.state}
-                                setGameState={this.setState}
-                            />
-                            <RoleInfoCard
-                                role={Target}
-                                gameState={this.state}
-                                setGameState={this.setState}
-                            />
-                        </div>
-                    </Col>
-                    <Col span={12} style={styled.midColStyle}>
-                        <Board
-                            gameState={this.state}
-                            setGameState={this.setState}
+    const { chances } = state;
+
+    return (
+        <>
+            <div style={styled.gameModeStyle}>{chances}</div>
+            <Divider />
+            <Row>
+                <Col span={6}>
+                    <b style={styled.sideTitleStyle}>说明</b>
+                    <div id="description-board" style={styled.sideColStyle}>
+                        <RoleInfoCard
+                            role={Citizen}
+                            gameState={state}
+                            setGameState={setState}
                         />
-                        <Chance chance={chances} />
-                    </Col>
-                    <Col span={6}>
-                        <b style={styled.sideTitleStyle}>笔记</b>
-                        <Flex gap="small" vertical>
-                            <FoundProgress gameState={this.state} />
-                        </Flex>
-                    </Col>
-                </Row>
-            </>
-        );
-    }
-}
+                        <RoleInfoCard
+                            role={Detective}
+                            gameState={state}
+                            setGameState={setState}
+                        />
+                        <RoleInfoCard
+                            role={Target}
+                            gameState={state}
+                            setGameState={setState}
+                        />
+                    </div>
+                </Col>
+                <Col span={12} style={styled.midColStyle}>
+                    <Board gameState={state} setGameState={setState} />
+                    <Chance chance={chances} />
+                </Col>
+                <Col span={6}>
+                    <b style={styled.sideTitleStyle}>笔记</b>
+                    <Flex gap="small" vertical>
+                        <FoundProgress gameState={state} />
+                    </Flex>
+                </Col>
+            </Row>
+        </>
+    );
+};
+
 export { Game };
 export type { GameState };

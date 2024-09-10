@@ -3,65 +3,63 @@ import {
     SpotBoxCss,
     SpotBoxVisibleCss,
 } from '@/components/css/spot';
-import { Component, MouseEventHandler } from 'react';
+import { useEffect, useState } from 'react';
 import {
     SpotBoxProps,
     SpotBoxState,
     SpotStatus,
     SpotVisible,
 } from '../../models/spot';
-class SpotBox extends Component<SpotBoxProps, SpotBoxState> {
-    constructor(props: SpotBoxProps) {
-        super(props);
-        const { role, x, y, visible, status } = props;
 
-        this.state = {
-            x: x,
-            y: y,
-            role: role,
-            visible: visible,
-            status: status,
-        };
-    }
+interface Props extends SpotBoxProps {}
 
-    handleClick: MouseEventHandler<HTMLElement> | undefined = (event: any) => {
-        if (this.state.status === SpotStatus.LOCKED) {
+const SpotBox: React.FC<Props> = props => {
+    const [state, setState] = useState<SpotBoxState>({
+        x: props.x,
+        y: props.y,
+        role: props.role,
+        visible: props.visible,
+        status: props.status,
+    });
+
+    const handleClick = (event: any) => {
+        if (state.status === SpotStatus.LOCKED) {
             return;
         }
 
-        if (this.props.gameState.chances === 0) {
+        if (props.gameState.chances === 0) {
             return;
         }
 
-        if (this.state.visible === SpotVisible.REVEALED) {
+        if (state.visible === SpotVisible.REVEALED) {
             return;
         }
-        let spots = this.props.gameState.spots;
-        spots[this.state.x][this.state.y].visible = SpotVisible.REVEALED;
 
-        this.props.setGameState({
+        const spots = props.gameState.spots;
+        spots[state.x][state.y].visible = SpotVisible.REVEALED;
+
+        props.setGameState({
             spots: spots,
-            chances: this.props.gameState.chances - 1,
+            chances: props.gameState.chances - 1,
         });
     };
 
-    render() {
-        const { x, y } = this.state;
-        if (this.state.status === SpotStatus.IDLE) {
-            useEffect(() => {
-              this.setState(this.props.gameState.spots[x][y]);
-            }, [this.state]);
+    useEffect(() => {
+        if (state.status === SpotStatus.IDLE) {
+            setState(props.gameState.spots[state.x][state.y]);
         }
-        return (
-            <div
-                onClick={this.handleClick}
-                style={Object.assign(
-                    SpotBoxColorCss(this.state.role),
-                    SpotBoxVisibleCss(this.state.visible),
-                    SpotBoxCss,
-                )}
-            ></div>
-        );
-    }
-}
+    }, [state]);
+
+    return (
+        <div
+            onClick={handleClick}
+            style={{
+                ...SpotBoxColorCss(state.role),
+                ...SpotBoxVisibleCss(state.visible),
+                ...SpotBoxCss,
+            }}
+        ></div>
+    );
+};
+
 export { SpotBox };
