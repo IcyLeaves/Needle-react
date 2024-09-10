@@ -48,7 +48,9 @@ class SpotBox extends Component<SpotBoxProps, SpotBoxState> {
     render() {
         const { x, y } = this.state;
         if (this.state.status === SpotStatus.IDLE) {
-            this.setState(this.props.gameState.spots[x][y]);
+            useEffect(() => {
+              this.setState(this.props.gameState.spots[x][y]);
+            }, [this.state]);
         }
         return (
             <div
