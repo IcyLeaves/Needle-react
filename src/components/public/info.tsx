@@ -13,15 +13,20 @@ const Info: React.FC<{
     return (
         <>
             {infoRoles.map(role => (
-                <RoleInfoCard key={role.id} role={role} />
+                <RoleInfoCard
+                    key={role.id}
+                    role={role}
+                    gameDispatches={gameDispatches}
+                />
             ))}
         </>
     );
 };
 const RoleInfoCard: React.FC<{
     role: Role;
+    gameDispatches: GameDispatches;
 }> = props => {
-    const { role } = props;
+    const { role, gameDispatches } = props;
 
     return (
         <>
@@ -47,6 +52,7 @@ const RoleInfoCard: React.FC<{
                                     y={0}
                                     visible={SpotVisible.REVEALED}
                                     status={SpotStatus.LOCKED}
+                                    gameDispatches={gameDispatches}
                                 />
                             </Col>
                             <Col span={18}>

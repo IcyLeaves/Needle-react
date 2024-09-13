@@ -10,28 +10,32 @@ import {
     SpotStatus,
     SpotVisible,
 } from '../../models/spot';
+import { GameDispatches } from './game';
 
-const isLocked = (props: SpotBoxProps, state: SpotBoxState) => {
+const isLocked = (gameDispatches: GameDispatches, state: SpotBoxState) => {
     return (
         state.status === SpotStatus.LOCKED ||
-        props.gameState === undefined ||
-        props.setGameState === undefined
+        gameDispatches.gameState === undefined ||
+        gameDispatches.setGameState === undefined
     );
 };
+
 const SpotBox: React.FC<SpotBoxProps> = props => {
+    const { x, y, role, visible, status, gameDispatches } = props;
+    const { gameState, setGameState } = gameDispatches;
     const [state, setState] = useState<SpotBoxState>({
-        x: props.x,
-        y: props.y,
-        role: props.role,
-        visible: props.visible,
-        status: props.status,
+        x: x,
+        y: y,
+        role: role,
+        visible: visible,
+        status: status,
     });
 
     const handleClick = (event: any) => {
-        if (isLocked(props, state)) {
+        if (isLocked(gameDispatches, state)) {
             return;
         }
-        let gameState = props.gameState!;
+        let gameState = gameDispatches.gameState!;
         if (gameState.chances === 0) {
             return;
         }
@@ -40,39 +44,35 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             return;
         }
 
-        const spots = gameState.spots;
-        spots[state.x][state.y].visible = SpotVisible.REVEALED;
-
-        props.setGameState!({
-            spots: spots,
-            chances: gameState.chances - 1,
-        });
+        gameState.spots[state.x][state.y].visible = SpotVisible.REVEALED;
+        gameState.chances = gameState.chances - 1;
+        setGameState(gameState);
     };
 
     const handleMouseEnter = (event: any) => {
-        if (isLocked(props, state) || !props.setInfoRoles) {
+        if (isLocked(gameDispatches, state) || !gameDispatches.setInfoRoles) {
             return;
         }
         if (state.visible === SpotVisible.HIDDEN) {
-            props.setInfoRoles([]);
+            gameDispatches.setInfoRoles([]);
             return;
         }
-        props.setInfoRoles([state.role]);
+        gameDispatches.setInfoRoles([state.role]);
     };
 
     const handleMouseLeave = (event: any) => {
-        if (isLocked(props, state) || !props.setInfoRoles) {
+        if (isLocked(gameDispatches, state) || !gameDispatches.setInfoRoles) {
             return;
         }
 
-        props.setInfoRoles([]);
+        gameDispatches.setInfoRoles([]);
     };
     useEffect(() => {
-        if (isLocked(props, state)) {
+        if (isLocked(gameDispatches, state)) {
             return;
         }
         if (state.status === SpotStatus.IDLE) {
-            setState(props.gameState!.spots[state.x][state.y]);
+            setState(gameDispatches.gameState!.spots[state.x][state.y]);
         }
     }, [state]);
 

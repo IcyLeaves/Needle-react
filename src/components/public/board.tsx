@@ -1,8 +1,6 @@
 import { Col, Row } from 'antd';
-import { Dispatch } from 'react';
-import Role from '../../models/role';
 import { SpotBoxState } from '../../models/spot';
-import { GameDispatches, GameState } from './game';
+import { GameDispatches } from './game';
 import { SpotBox } from './spot';
 export type BoardConfig = {
     rows: number;
@@ -14,10 +12,7 @@ const renderSpotBoard = (
     rows: number,
     cols: number,
     spots: SpotBoxState[][],
-    gameState: GameState,
-    setGameState: Dispatch<GameState>,
-    infoRoles: Role[],
-    setInfoRoles: Dispatch<Role[]>,
+    gameDispatches: GameDispatches,
 ): JSX.Element => {
     return (
         <>
@@ -31,10 +26,7 @@ const renderSpotBoard = (
                                 y={j}
                                 visible={spots[i][j].visible}
                                 status={spots[i][j].status}
-                                gameState={gameState}
-                                setGameState={setGameState}
-                                infoRoles={infoRoles}
-                                setInfoRoles={setInfoRoles}
+                                gameDispatches={gameDispatches}
                             />
                         </Col>
                     ))}
@@ -48,20 +40,12 @@ const Board: React.FC<{
     gameDispatches: GameDispatches;
 }> = props => {
     const { gameDispatches } = props;
-    const { gameState, setGameState, infoRoles, setInfoRoles } = gameDispatches;
+    const { gameState } = gameDispatches;
 
     let rows = gameState.spots.length;
     let cols = gameState.spots[0].length;
     // init
-    let board = renderSpotBoard(
-        rows,
-        cols,
-        gameState.spots,
-        gameState,
-        setGameState,
-        infoRoles,
-        setInfoRoles,
-    );
+    let board = renderSpotBoard(rows, cols, gameState.spots, gameDispatches);
 
     let boardContainerCss: React.CSSProperties = {
         display: 'flex',

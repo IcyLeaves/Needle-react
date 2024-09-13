@@ -1,5 +1,4 @@
-import { Dispatch } from 'react';
-import { GameState } from '../components/public/game';
+import { GameDispatches } from '../components/public/game';
 import Role from './role';
 
 enum SpotVisible {
@@ -38,11 +37,7 @@ type SpotBoxProps = {
     // status: IDLE, LOCKED
     status: SpotStatus;
 
-    gameState?: GameState;
-    setGameState?: Dispatch<GameState>;
-
-    infoRoles?: Role[];
-    setInfoRoles?: Dispatch<Role[]>;
+    gameDispatches: GameDispatches;
 };
 export { SpotStatus, SpotVisible };
 export type { SpotBoxProps, SpotBoxState };
