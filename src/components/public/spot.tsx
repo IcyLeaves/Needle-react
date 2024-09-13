@@ -36,6 +36,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             return;
         }
         let gameState = gameDispatches.gameState!;
+
         if (gameState.chances === 0) {
             return;
         }
@@ -44,8 +45,12 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             return;
         }
 
-        gameState.spots[state.x][state.y].visible = SpotVisible.REVEALED;
         gameState.chances = gameState.chances - 1;
+
+        gameState.spots[state.x][state.y].visible = SpotVisible.REVEALED;
+        if (role.onRevealed) {
+            gameState = role.onRevealed(gameState);
+        }
         setGameState(gameState);
     };
 
@@ -67,6 +72,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
 
         gameDispatches.setInfoRoles([]);
     };
+
     useEffect(() => {
         if (isLocked(gameDispatches, state)) {
             return;

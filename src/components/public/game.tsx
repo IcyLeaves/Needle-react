@@ -17,6 +17,7 @@ export type AnyFunction = (...args: any[]) => any;
 type GameState = {
     chances: number;
     spots: SpotBoxState[][];
+    isGameOver: boolean;
     onRoundStart: AnyFunction[];
     onFlip: AnyFunction[];
     onThatFlip: AnyFunction[];
@@ -85,6 +86,7 @@ const Game: React.FC<GameProps> = ({ config }) => {
         onThatFlip: [],
         onRevealed: [],
         onThatRevealed: [],
+        isGameOver: false,
     });
     const [infoRoles, setInfoRoles] = useState<Role[]>([]);
     let gameDispatches: GameDispatches = {
@@ -122,4 +124,4 @@ const Game: React.FC<GameProps> = ({ config }) => {
 };
 
 export { Game };
-export type { GameState, GameDispatches };
+export type { GameDispatches, GameState };
