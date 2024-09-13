@@ -16,11 +16,12 @@ import Sheriff from '../roles/sheriff/sheriff';
 import Target from '../roles/target/target';
 import Volunteer from '../roles/volunteer/volunteer';
 import Witch from '../roles/witch/witch';
-import { GameState } from './game';
+import { GameDispatches } from './game';
 import { RoleLabel } from './role';
 
-const FoundProgress: React.FC<{ gameState: GameState }> = props => {
-    const { gameState } = props;
+const FoundProgress: React.FC<{ gameDispatches: GameDispatches }> = props => {
+    const { gameDispatches } = props;
+    const { gameState } = gameDispatches;
     type RoleMap = {
         [x: string]: {
             found: number;

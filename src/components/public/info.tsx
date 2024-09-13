@@ -1,16 +1,18 @@
 import Role from '@/models/role';
 import { SpotStatus, SpotVisible } from '@/models/spot';
 import { Card, Col, Row } from 'antd';
+import { GameDispatches } from './game';
 import { RoleLabel } from './role';
 import { SpotBox } from './spot';
 
 const Info: React.FC<{
-    roles: Role[];
+    gameDispatches: GameDispatches;
 }> = props => {
-    const { roles } = props;
+    const { gameDispatches } = props;
+    const { infoRoles } = gameDispatches;
     return (
         <>
-            {roles.map(role => (
+            {infoRoles.map(role => (
                 <RoleInfoCard key={role.id} role={role} />
             ))}
         </>

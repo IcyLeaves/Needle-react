@@ -2,7 +2,7 @@ import { Col, Row } from 'antd';
 import { Dispatch } from 'react';
 import Role from '../../models/role';
 import { SpotBoxState } from '../../models/spot';
-import { GameState } from './game';
+import { GameDispatches, GameState } from './game';
 import { SpotBox } from './spot';
 export type BoardConfig = {
     rows: number;
@@ -45,12 +45,10 @@ const renderSpotBoard = (
 };
 
 const Board: React.FC<{
-    gameState: GameState;
-    setGameState: Dispatch<GameState>;
-    infoRoles: Role[];
-    setInfoRoles: Dispatch<Role[]>;
+    gameDispatches: GameDispatches;
 }> = props => {
-    const { gameState, setGameState } = props;
+    const { gameDispatches } = props;
+    const { gameState, setGameState, infoRoles, setInfoRoles } = gameDispatches;
 
     let rows = gameState.spots.length;
     let cols = gameState.spots[0].length;
@@ -61,8 +59,8 @@ const Board: React.FC<{
         gameState.spots,
         gameState,
         setGameState,
-        props.infoRoles,
-        props.setInfoRoles,
+        infoRoles,
+        setInfoRoles,
     );
 
     let boardContainerCss: React.CSSProperties = {

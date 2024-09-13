@@ -1,7 +1,7 @@
 import * as styled from '@/app/style';
 import FoundProgress from '@/components/public/note';
 import { Col, Divider, Flex, Row } from 'antd';
-import React, { useState } from 'react';
+import React, { Dispatch, useState } from 'react';
 import Role from '../../models/role';
 import { SpotBoxState, SpotStatus, SpotVisible } from '../../models/spot';
 import Deck from '../../utils/draw';
@@ -12,10 +12,16 @@ import { Info } from './info';
 type GameProps = {
     config: GameConfig;
 };
+export type AnyFunction = (...args: any[]) => any;
 
 type GameState = {
     chances: number;
     spots: SpotBoxState[][];
+    onRoundStart: AnyFunction[];
+    onFlip: AnyFunction[];
+    onThatFlip: AnyFunction[];
+    onRevealed: AnyFunction[];
+    onThatRevealed: AnyFunction[];
 };
 
 type GameConfig = {
@@ -27,6 +33,12 @@ type GameConfig = {
     };
 };
 
+type GameDispatches = {
+    gameState: GameState;
+    setGameState: Dispatch<GameState>;
+    infoRoles: Role[];
+    setInfoRoles: Dispatch<Role[]>;
+};
 const Chance: React.FC<{ chance: number }> = props => {
     const { chance } = props;
     return <div style={{ marginTop: 20 }}>🔍 × {chance}</div>;
@@ -68,9 +80,19 @@ const Game: React.FC<GameProps> = ({ config }) => {
     const [state, setState] = useState<GameState>({
         chances: config.chances,
         spots: InitSpotStates(InitSpotDeck(config), config),
+        onRoundStart: [],
+        onFlip: [],
+        onThatFlip: [],
+        onRevealed: [],
+        onThatRevealed: [],
     });
     const [infoRoles, setInfoRoles] = useState<Role[]>([]);
-
+    let gameDispatches: GameDispatches = {
+        gameState: state,
+        setGameState: setState,
+        infoRoles: infoRoles,
+        setInfoRoles: setInfoRoles,
+    };
     const { chances } = state;
 
     return (
@@ -81,22 +103,17 @@ const Game: React.FC<GameProps> = ({ config }) => {
                 <Col span={6}>
                     <b style={styled.sideTitleStyle}>说明</b>
                     <div id="description-board" style={styled.sideColStyle}>
-                        <Info roles={infoRoles} />
+                        <Info gameDispatches={gameDispatches} />
                     </div>
                 </Col>
                 <Col span={12} style={styled.midColStyle}>
-                    <Board
-                        gameState={state}
-                        setGameState={setState}
-                        setInfoRoles={setInfoRoles}
-                        infoRoles={infoRoles}
-                    />
+                    <Board gameDispatches={gameDispatches} />
                     <Chance chance={chances} />
                 </Col>
                 <Col span={6}>
                     <b style={styled.sideTitleStyle}>笔记</b>
                     <Flex gap="small" vertical>
-                        <FoundProgress gameState={state} />
+                        <FoundProgress gameDispatches={gameDispatches} />
                     </Flex>
                 </Col>
             </Row>
@@ -105,4 +122,4 @@ const Game: React.FC<GameProps> = ({ config }) => {
 };
 
 export { Game };
-export type { GameState };
+export type { GameState, GameDispatches };
