@@ -8,6 +8,7 @@ const Detective: Role = {
     color: '#512da8',
     onRevealed: (gameState: GameState) => {
         gameState.chances = gameState.chances + 2;
+        console.log('Detective onRevealed');
         return gameState;
     },
 };

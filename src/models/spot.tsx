@@ -1,3 +1,4 @@
+import { Buff } from '../components/buffs/buffs';
 import { GameDispatches } from '../components/public/game';
 import Role from './role';
 
@@ -23,21 +24,15 @@ type SpotBoxState = {
     visible: SpotVisible;
     // status: IDLE, LOCKED
     status: SpotStatus;
+    // buffs
+    buffs: Map<string, Buff>;
 };
 
 type SpotBoxProps = {
-    // x: row id
-    x: number;
-    // y: col id
-    y: number;
-    // role: Role
-    role: Role;
-    // visible: HIDDEN, VISIBLE, REVEALED
-    visible: SpotVisible;
-    // status: IDLE, LOCKED
-    status: SpotStatus;
+    boxState: SpotBoxState;
 
     gameDispatches: GameDispatches;
 };
+
 export { SpotStatus, SpotVisible };
 export type { SpotBoxProps, SpotBoxState };

@@ -47,11 +47,14 @@ const RoleInfoCard: React.FC<{
                                 }}
                             >
                                 <SpotBox
-                                    role={role}
-                                    x={0}
-                                    y={0}
-                                    visible={SpotVisible.REVEALED}
-                                    status={SpotStatus.LOCKED}
+                                    boxState={{
+                                        role: role,
+                                        visible: SpotVisible.REVEALED,
+                                        status: SpotStatus.LOCKED,
+                                        buffs: new Map(),
+                                        x: -1,
+                                        y: -1,
+                                    }}
                                     gameDispatches={gameDispatches}
                                 />
                             </Col>

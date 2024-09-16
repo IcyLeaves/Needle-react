@@ -10,6 +10,9 @@ import {
     SpotStatus,
     SpotVisible,
 } from '../../models/spot';
+import { Buff } from '../buffs/buffs';
+import Jammed from '../buffs/jam';
+import Jam from '../roles/jam/jam';
 import { GameDispatches } from './game';
 
 const isLocked = (gameDispatches: GameDispatches, state: SpotBoxState) => {
@@ -21,36 +24,45 @@ const isLocked = (gameDispatches: GameDispatches, state: SpotBoxState) => {
 };
 
 const SpotBox: React.FC<SpotBoxProps> = props => {
-    const { x, y, role, visible, status, gameDispatches } = props;
-    const { gameState, setGameState } = gameDispatches;
+    const { boxState, gameDispatches } = props;
+    const { x, y, role, visible, status, buffs } = boxState;
+    let { gameState, setGameState } = gameDispatches;
     const [state, setState] = useState<SpotBoxState>({
         x: x,
         y: y,
         role: role,
         visible: visible,
         status: status,
+        buffs: buffs,
     });
-
     const handleClick = (event: any) => {
         if (isLocked(gameDispatches, state)) {
             return;
         }
-        let gameState = gameDispatches.gameState!;
 
+        // 没有线索不能点击
         if (gameState.chances === 0) {
             return;
         }
 
+        // 已经翻过了
         if (state.visible === SpotVisible.REVEALED) {
             return;
         }
 
+        // 消耗线索
         gameState.chances = gameState.chances - 1;
 
-        gameState.spots[state.x][state.y].visible = SpotVisible.REVEALED;
-        if (role.onRevealed) {
-            gameState = role.onRevealed(gameState);
+        //
+        Jam.onBeforeRevealed!(gameState, x, y);
+        if (!state.buffs.has(Jammed.id)) {
+            gameState.spots[state.x][state.y].visible = SpotVisible.REVEALED;
+            if (role.onRevealed) {
+                gameState = role.onRevealed(gameState);
+            }
         }
+
+        gameState.clicks = gameState.clicks + 1;
         setGameState(gameState);
     };
 
@@ -74,13 +86,13 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
     };
 
     useEffect(() => {
-        if (isLocked(gameDispatches, state)) {
+        let oldGameState = gameDispatches.gameState!;
+        if (state.x === -1 || state.y === -1) {
             return;
         }
-        if (state.status === SpotStatus.IDLE) {
-            setState(gameDispatches.gameState!.spots[state.x][state.y]);
-        }
-    }, [state]);
+        oldGameState.spots[state.x][state.y] = state;
+        setGameState(oldGameState);
+    }, [state, gameState]);
 
     return (
         <div
@@ -92,7 +104,11 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                 ...SpotBoxVisibleCss(state.visible),
                 ...SpotBoxCss,
             }}
-        ></div>
+        >
+            {Array.from(state.buffs.values()).map((buff: Buff): JSX.Element => {
+                return <div style={{ pointerEvents: 'none' }}>{buff.icon}</div>;
+            })}
+        </div>
     );
 };
 

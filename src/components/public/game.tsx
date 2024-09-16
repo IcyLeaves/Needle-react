@@ -17,6 +17,7 @@ export type AnyFunction = (...args: any[]) => any;
 type GameState = {
     chances: number;
     spots: SpotBoxState[][];
+    clicks: number;
     isGameOver: boolean;
     onRoundStart: AnyFunction[];
     onFlip: AnyFunction[];
@@ -71,6 +72,7 @@ const InitSpotStates = (
                 role: deck.draw()!,
                 visible: SpotVisible.HIDDEN,
                 status: SpotStatus.IDLE,
+                buffs: new Map(),
             });
         }
     }
@@ -78,8 +80,9 @@ const InitSpotStates = (
 };
 
 const Game: React.FC<GameProps> = ({ config }) => {
-    const [state, setState] = useState<GameState>({
+    const [state, updateState] = useState<GameState>({
         chances: config.chances,
+        clicks: 0,
         spots: InitSpotStates(InitSpotDeck(config), config),
         onRoundStart: [],
         onFlip: [],
@@ -88,6 +91,11 @@ const Game: React.FC<GameProps> = ({ config }) => {
         onThatRevealed: [],
         isGameOver: false,
     });
+    const [key, setKey] = useState(0);
+    const setState: Dispatch<GameState> = (newState: GameState) => {
+        updateState(newState);
+        setKey(Math.random());
+    };
     const [infoRoles, setInfoRoles] = useState<Role[]>([]);
     let gameDispatches: GameDispatches = {
         gameState: state,
@@ -95,11 +103,11 @@ const Game: React.FC<GameProps> = ({ config }) => {
         infoRoles: infoRoles,
         setInfoRoles: setInfoRoles,
     };
-    const { chances } = state;
-
     return (
         <>
-            <div style={styled.gameModeStyle}>{chances}</div>
+            {/* hidden */}
+            <div style={{ display: 'none' }} key={key}></div>
+            <div style={styled.gameModeStyle}>{state.chances}</div>
             <Divider />
             <Row>
                 <Col span={6}>
@@ -110,7 +118,7 @@ const Game: React.FC<GameProps> = ({ config }) => {
                 </Col>
                 <Col span={12} style={styled.midColStyle}>
                     <Board gameDispatches={gameDispatches} />
-                    <Chance chance={chances} />
+                    <Chance chance={state.chances} />
                 </Col>
                 <Col span={6}>
                     <b style={styled.sideTitleStyle}>笔记</b>

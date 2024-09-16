@@ -21,11 +21,8 @@ const renderSpotBoard = (
                     {Array.from({ length: cols }, (_, j) => (
                         <Col span={(24 - cols) / cols + 1} key={j}>
                             <SpotBox
-                                role={spots[i][j].role}
-                                x={i}
-                                y={j}
-                                visible={spots[i][j].visible}
-                                status={spots[i][j].status}
+                                key={`spotbox-${i}-${j}`}
+                                boxState={spots[i][j]}
                                 gameDispatches={gameDispatches}
                             />
                         </Col>

@@ -6,6 +6,7 @@ type Role = {
     name: string;
     description: string;
     onRevealed?: AnyFunction;
+    onBeforeRevealed?: AnyFunction;
 };
 
 export default Role;
