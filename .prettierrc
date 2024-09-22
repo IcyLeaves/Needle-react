@@ -1,0 +1,12 @@
+{
+    'printWidth': 80, # 一行代码的最大长度
+    'tabWidth': 4, # 缩进使用的空格数
+    'useTabs': false, # 是否使用制表符进行缩进
+    'semi': true, # 是否在语句末尾添加分号
+    'singleQuote': true, # 使用单引号而不是双引号
+    'trailingComma': 'all', # 在多参数或多表达式时是否添加尾逗号
+    'bracketSpacing': true, # 在对象的大括号内是否添加空格
+    'jsxBracketSameLine': false, # 在JSX中是否将尖括号放在同一行
+    'arrowParens': 'avoid', # 箭头函数参数只有一个时是否使用括号
+    'endOfLine': 'lf', # 行尾使用换行符类型（LF或CRLF）
+}

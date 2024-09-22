@@ -1,113 +1,129 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
+import Citizen from '@/components/roles/citizen/citizen';
+import Detective from '@/components/roles/detective/detective';
+import Target from '@/components/roles/target/target';
+import { BookFilled, QuestionCircleFilled } from '@ant-design/icons';
+import {
+    Button,
+    Col,
+    ConfigProvider,
+    Divider,
+    Flex,
+    Layout,
+    Row,
+    Spin,
+} from 'antd';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { Suspense, useEffect } from 'react';
+import { Game, GameConfig } from '../components/public/game';
+import Augur from '../components/roles/augur/augur';
+import BangBang from '../components/roles/bangbang/bangbang';
+import Copies from '../components/roles/copies/copies';
+import Fortune from '../components/roles/fortune/fortune';
+import Ganster from '../components/roles/ganster/ganster';
+import Jam from '../components/roles/jam/jam';
+import Killer from '../components/roles/killer/killer';
+import Reporter from '../components/roles/reporter/reporter';
+import Sheriff from '../components/roles/sheriff/sheriff';
+import Volunteer from '../components/roles/volunteer/volunteer';
+import Witch from '../components/roles/witch/witch';
+import * as styled from './style';
+const { Header, Footer, Sider, Content } = Layout;
+const alignOptions = ['flex-start', 'center', 'flex-end'];
+const App: React.FC = () => {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const seed = searchParams.get('seed');
+    useEffect(() => {
+        if (!seed) {
+            const randomSeed = Math.floor(Math.random() * 1000000).toString();
+            router.push('?seed=' + randomSeed);
+        }
+    }, [router]);
+    if (!seed) {
+        return <></>;
+    }
+    const boardConfig: GameConfig = {
+        rows: 8,
+        cols: 8,
+        chances: 16,
+        roleMap: {
+            [Target().id]: 1,
+            [Citizen().id]: 13,
+            [Detective().id]: 12,
+            [Jam().id]: 5,
+            [Witch().id]: 3,
+            [Sheriff().id]: 5,
+            [Killer().id]: 3,
+            [Augur().id]: 3,
+            [Volunteer().id]: 3,
+            [Copies().id]: 2,
+            [Reporter().id]: 5,
+            [Fortune().id]: 3,
+            [Ganster().id]: 3,
+            [BangBang().id]: 3,
+        },
+        seed: seed!.toString(),
+    };
+    return (
+        <ConfigProvider
+            theme={{
+                components: {
+                    Layout: {
+                        bodyBg: 'white',
+                        headerBg: 'white',
+                        headerColor: 'black',
+                    },
+                },
+                token: {
+                    lineWidth: 2,
+                    marginLG: 8,
+                    fontSize: 16,
+                    fontFamily: 'normal',
+                },
+            }}
         >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+            <Layout style={styled.layoutStyle}>
+                <Header style={styled.headerStyle}>
+                    <Flex gap="middle" align="center" justify="center" vertical>
+                        <Row style={styled.rowStyle}>
+                            <Col span={3} offset={3}>
+                                <Button
+                                    style={styled.titleIconStyle}
+                                    size="large"
+                                >
+                                    <QuestionCircleFilled />
+                                </Button>
+                                <Button
+                                    style={styled.titleIconStyle}
+                                    size="large"
+                                >
+                                    <BookFilled />
+                                </Button>
+                            </Col>
+                            <Col span={12} style={styled.colCenterStyle}>
+                                <div style={styled.bigTitleStyle}>
+                                    Needle v3.0
+                                </div>
+                            </Col>
+                            <Col span={3}></Col>
+                        </Row>
+                    </Flex>
+                </Header>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+                <Content style={styled.contentStyle}>
+                    <Divider />
+                    <Game config={boardConfig} />
+                </Content>
+            </Layout>
+        </ConfigProvider>
+    );
+};
+export default function AppWrapper() {
+    return (
+        <Suspense fallback={<Spin />}>
+            <App />
+        </Suspense>
+    );
 }
