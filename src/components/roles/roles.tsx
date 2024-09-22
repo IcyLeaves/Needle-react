@@ -14,20 +14,20 @@ import Volunteer from './volunteer/volunteer';
 import Witch from './witch/witch';
 
 const ROLES_MAP = {
-    [Augur.id]: Augur,
-    [BangBang.id]: BangBang,
-    [Citizen.id]: Citizen,
-    [Detective.id]: Detective,
-    [Fortune.id]: Fortune,
-    [Ganster.id]: Ganster,
-    [Jam.id]: Jam,
-    [Killer.id]: Killer,
-    [Reporter.id]: Reporter,
-    [Sheriff.id]: Sheriff,
-    [Target.id]: Target,
-    [Volunteer.id]: Volunteer,
-    [Witch.id]: Witch,
-    [Copies.id]: Copies,
+    [Augur().id]: Augur(),
+    [BangBang().id]: BangBang(),
+    [Citizen().id]: Citizen(),
+    [Detective().id]: Detective(),
+    [Fortune().id]: Fortune(),
+    [Ganster().id]: Ganster(),
+    [Jam().id]: Jam(),
+    [Killer().id]: Killer(),
+    [Reporter().id]: Reporter(),
+    [Sheriff().id]: Sheriff(),
+    [Target().id]: Target(),
+    [Volunteer().id]: Volunteer(),
+    [Witch().id]: Witch(),
+    [Copies().id]: Copies(),
 };
 
 const str2role = (str: string) => {

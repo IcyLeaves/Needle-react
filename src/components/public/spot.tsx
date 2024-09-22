@@ -12,6 +12,7 @@ import {
 } from '../../models/spot';
 import { Buff } from '../buffs/buffs';
 import Jammed from '../buffs/jam';
+import Cursing from '../buffs/witch';
 import Jam from '../roles/jam/jam';
 import { GameDispatches } from './game';
 
@@ -54,15 +55,31 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         gameState.chances = gameState.chances - 1;
 
         //
-        Jam.onBeforeRevealed!(gameState, x, y);
-        if (!state.buffs.has(Jammed.id)) {
+        Jam().onBeforeRevealed!(gameState, x, y);
+        if (!state.buffs.has(Jammed().id)) {
+            // 揭露了，但翻开前先激活
+            for (let i = 0; i < gameState.spots.length; i++) {
+                for (let j = 0; j < gameState.spots[i].length; j++) {
+                    if (gameState.spots[i][j].buffs.has(Cursing().id)) {
+                        gameState = gameState.spots[i][j].role.onActivating!(
+                            gameState,
+                            i,
+                            j,
+                            state,
+                        );
+                    }
+                }
+            }
+
             gameState.spots[state.x][state.y].visible = SpotVisible.REVEALED;
             if (role.onRevealed) {
-                gameState = role.onRevealed(gameState);
+                //揭露时
+                gameState = role.onRevealed(gameState, x, y);
             }
         }
 
         gameState.clicks = gameState.clicks + 1;
+
         setGameState(gameState);
     };
 
@@ -106,7 +123,15 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             }}
         >
             {Array.from(state.buffs.values()).map((buff: Buff): JSX.Element => {
-                return <div style={{ pointerEvents: 'none' }}>{buff.icon}</div>;
+                let buffIcon = buff.icon[0];
+                if (buff.idx) {
+                    buffIcon = buff.icon[buff.idx];
+                }
+                return (
+                    <div style={{ pointerEvents: 'none' }} key={buff.id}>
+                        {buffIcon}
+                    </div>
+                );
             })}
         </div>
     );

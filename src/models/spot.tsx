@@ -1,5 +1,5 @@
 import { Buff } from '../components/buffs/buffs';
-import { GameDispatches } from '../components/public/game';
+import { GameDispatches, GameState } from '../components/public/game';
 import Role from './role';
 
 enum SpotVisible {
@@ -12,7 +12,7 @@ enum SpotStatus {
     IDLE = 'IDLE',
     LOCKED = 'LOCKED',
 }
-
+// type Listener = (gameState: GameState, x: number, y: number) => GameState;
 type SpotBoxState = {
     // x: row id
     x: number;

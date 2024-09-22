@@ -33,6 +33,7 @@ type GameConfig = {
     roleMap: {
         [x: string]: number;
     };
+    seed: string;
 };
 
 type GameDispatches = {
@@ -55,7 +56,7 @@ const InitSpotDeck = (config: GameConfig): Deck<Role> => {
             deck.push(spot);
         }
     }
-    return new Deck<Role>(deck);
+    return new Deck<Role>(deck, config.seed);
 };
 
 const InitSpotStates = (
@@ -70,7 +71,7 @@ const InitSpotStates = (
                 x: i,
                 y: j,
                 role: deck.draw()!,
-                visible: SpotVisible.HIDDEN,
+                visible: SpotVisible.VISIBLE,
                 status: SpotStatus.IDLE,
                 buffs: new Map(),
             });
@@ -92,10 +93,12 @@ const Game: React.FC<GameProps> = ({ config }) => {
         isGameOver: false,
     });
     const [key, setKey] = useState(0);
+
     const setState: Dispatch<GameState> = (newState: GameState) => {
         updateState(newState);
         setKey(Math.random());
     };
+
     const [infoRoles, setInfoRoles] = useState<Role[]>([]);
     let gameDispatches: GameDispatches = {
         gameState: state,
@@ -132,4 +135,4 @@ const Game: React.FC<GameProps> = ({ config }) => {
 };
 
 export { Game };
-export type { GameDispatches, GameState };
+export type { GameConfig, GameDispatches, GameState };

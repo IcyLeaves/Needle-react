@@ -1,8 +1,9 @@
 type Buff = {
     id: string;
     name: string;
-    icon: JSX.Element;
+    icon: JSX.Element[];
     description: string;
+    idx?: number;
 };
 
 const RandomKey: string = Math.random().toString(36).substring(7);

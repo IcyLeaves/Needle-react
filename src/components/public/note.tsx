@@ -51,20 +51,20 @@ const FoundProgress: React.FC<{ gameDispatches: GameDispatches }> = props => {
     let res = <></>;
     //TODO fix order
     let roleMapKeysKeys = [
-        Target.id,
-        Citizen.id,
-        Detective.id,
-        Jam.id,
-        Witch.id,
-        Sheriff.id,
-        Killer.id,
-        Augur.id,
-        Volunteer.id,
-        Copies.id,
-        Reporter.id,
-        Fortune.id,
-        Ganster.id,
-        BangBang.id,
+        Target().id,
+        Citizen().id,
+        Detective().id,
+        Jam().id,
+        Witch().id,
+        Sheriff().id,
+        Killer().id,
+        Augur().id,
+        Volunteer().id,
+        Copies().id,
+        Reporter().id,
+        Fortune().id,
+        Ganster().id,
+        BangBang().id,
     ];
     return (
         <>

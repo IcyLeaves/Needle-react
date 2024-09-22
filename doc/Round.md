@@ -4,7 +4,7 @@
 
 ## 轮次事件
 
-
+- 是否能调查：JudgeCanFlip
 - 花费 1 线索
 - 当前 spot 现身前：OnBeforeRevealed
 - SpotBox 现身
