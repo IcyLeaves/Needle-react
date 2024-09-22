@@ -4,9 +4,18 @@ import Citizen from '@/components/roles/citizen/citizen';
 import Detective from '@/components/roles/detective/detective';
 import Target from '@/components/roles/target/target';
 import { BookFilled, QuestionCircleFilled } from '@ant-design/icons';
-import { Button, Col, ConfigProvider, Divider, Flex, Layout, Row } from 'antd';
+import {
+    Button,
+    Col,
+    ConfigProvider,
+    Divider,
+    Flex,
+    Layout,
+    Row,
+    Spin,
+} from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Game, GameConfig } from '../components/public/game';
 import Augur from '../components/roles/augur/augur';
 import BangBang from '../components/roles/bangbang/bangbang';
@@ -111,5 +120,10 @@ const App: React.FC = () => {
         </ConfigProvider>
     );
 };
-
-export default App;
+export default function AppWrapper() {
+    return (
+        <Suspense fallback={<Spin />}>
+            <App />
+        </Suspense>
+    );
+}
