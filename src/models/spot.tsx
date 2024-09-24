@@ -26,6 +26,8 @@ type SpotBoxState = {
     status: SpotStatus;
     // buffs
     buffs: Map<string, Buff>;
+    // attrs
+    attrs?: Map<string, any>;
 };
 
 type SpotBoxProps = {

@@ -10,10 +10,13 @@ import {
     SpotStatus,
     SpotVisible,
 } from '../../models/spot';
+import { nearEight } from '../../utils/graph';
 import { Buff } from '../buffs/buffs';
 import Jammed from '../buffs/jam';
 import Cursing from '../buffs/witch';
 import Jam from '../roles/jam/jam';
+import Sheriff from '../roles/sheriff/sheriff';
+import Witch from '../roles/witch/witch';
 import { GameDispatches } from './game';
 
 const isLocked = (gameDispatches: GameDispatches, state: SpotBoxState) => {
@@ -61,7 +64,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             for (let i = 0; i < gameState.spots.length; i++) {
                 for (let j = 0; j < gameState.spots[i].length; j++) {
                     if (gameState.spots[i][j].buffs.has(Cursing().id)) {
-                        gameState = gameState.spots[i][j].role.onActivating!(
+                        gameState = Witch().onActivating!(
                             gameState,
                             i,
                             j,
@@ -72,6 +75,17 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             }
 
             gameState.spots[state.x][state.y].visible = SpotVisible.REVEALED;
+            // sheriff
+            let nears = nearEight(gameState.spots, x, y);
+            for (var near of nears) {
+                if (!near) continue;
+                gameState = Sheriff().onActivating!(
+                    gameState,
+                    near.x,
+                    near.y,
+                    state,
+                );
+            }
             if (role.onRevealed) {
                 //揭露时
                 gameState = role.onRevealed(gameState, x, y);

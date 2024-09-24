@@ -1,7 +1,7 @@
-import nearFour from '../../../utils/graph';
+import Role, { RolesType } from '../../../models/role';
+import { nearFour } from '../../../utils/graph';
 import Jammed from '../../buffs/jam';
 import { GameState } from '../../public/game';
-import Role, { RolesType } from '../../../models/role';
 
 const Jam = (): Role => {
     return {
