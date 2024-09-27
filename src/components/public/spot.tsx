@@ -13,8 +13,8 @@ import {
 import { nearEight } from '../../utils/graph';
 import { Buff } from '../buffs/buffs';
 import Jammed from '../buffs/jam';
-import Cursing from '../buffs/witch';
 import Jam from '../roles/jam/jam';
+import Killer from '../roles/killer/killer';
 import Sheriff from '../roles/sheriff/sheriff';
 import Witch from '../roles/witch/witch';
 import { GameDispatches } from './game';
@@ -63,14 +63,8 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             // 揭露了，但翻开前先激活
             for (let i = 0; i < gameState.spots.length; i++) {
                 for (let j = 0; j < gameState.spots[i].length; j++) {
-                    if (gameState.spots[i][j].buffs.has(Cursing().id)) {
-                        gameState = Witch().onActivating!(
-                            gameState,
-                            i,
-                            j,
-                            state,
-                        );
-                    }
+                    gameState = Witch().onActivating!(gameState, i, j, state);
+                    gameState = Killer().onActivating!(gameState, i, j, state);
                 }
             }
 
@@ -89,6 +83,11 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             if (role.onRevealed) {
                 //揭露时
                 gameState = role.onRevealed(gameState, x, y);
+            }
+            for (let i = 0; i < gameState.spots.length; i++) {
+                for (let j = 0; j < gameState.spots[i].length; j++) {
+                    gameState = Killer().onActivating!(gameState, i, j, state);
+                }
             }
         }
 

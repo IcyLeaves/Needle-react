@@ -22,13 +22,13 @@ const Witch = (): Role => {
             x: number,
             y: number,
             revealing: SpotBoxState,
-        ) => {
+        ): GameState => {
             // 1. 没有揭示，不能激活
             // 2. 揭示了但没有Buff，不能激活
             let cursing = Cursing();
             let currBox = gameState.spots[x][y];
-            if (currBox.visible != 'REVEALED') return;
-            if (!currBox.buffs.has(cursing.id)) return;
+            if (currBox.visible != 'REVEALED') return gameState;
+            if (!currBox.buffs.has(cursing.id)) return gameState;
             // 3. 揭示了且有Buff，可以激活
             if (revealing.role.type == RolesType.DARK) {
                 gameState.chances = 1;
