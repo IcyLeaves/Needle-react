@@ -16,6 +16,7 @@ import Jammed from '../buffs/jam';
 import Jam from '../roles/jam/jam';
 import Killer from '../roles/killer/killer';
 import Sheriff from '../roles/sheriff/sheriff';
+import Volunteer from '../roles/volunteer/volunteer';
 import Witch from '../roles/witch/witch';
 import { GameDispatches } from './game';
 
@@ -53,7 +54,11 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         if (state.visible === SpotVisible.REVEALED) {
             return;
         }
-
+        for (let i = 0; i < gameState.spots.length; i++) {
+            for (let j = 0; j < gameState.spots[i].length; j++) {
+                gameState = Volunteer().onActivating!(gameState, i, j, state);
+            }
+        }
         // 消耗线索
         gameState.chances = gameState.chances - 1;
 
