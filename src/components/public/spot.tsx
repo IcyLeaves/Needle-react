@@ -64,7 +64,6 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             for (let i = 0; i < gameState.spots.length; i++) {
                 for (let j = 0; j < gameState.spots[i].length; j++) {
                     gameState = Witch().onActivating!(gameState, i, j, state);
-                    gameState = Killer().onActivating!(gameState, i, j, state);
                 }
             }
 

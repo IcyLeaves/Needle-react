@@ -15,6 +15,7 @@ type GameProps = {
 export type AnyFunction = (...args: any[]) => any;
 
 type GameState = {
+    seed: string;
     chances: number;
     spots: SpotBoxState[][];
     clicks: number;
@@ -82,6 +83,7 @@ const InitSpotStates = (
 
 const Game: React.FC<GameProps> = ({ config }) => {
     const [state, updateState] = useState<GameState>({
+        seed: config.seed,
         chances: config.chances,
         clicks: 0,
         spots: InitSpotStates(InitSpotDeck(config), config),
