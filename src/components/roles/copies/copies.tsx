@@ -1,4 +1,4 @@
-import { SpotBoxState, SwapSpots } from '../../../models/spot';
+import { SpotBoxState, SpotVisible, SwapSpots } from '../../../models/spot';
 import { GameState } from '../../public/game';
 
 import Role, { RolesType } from '../../../models/role';
@@ -25,7 +25,8 @@ const Copies = (): Role => {
             // 1. revealing 是 target，如果不是的话，说明别的替身已经交换过了
             if (revealing.role.id != Target().id) return [gameState, currIdx];
             // 2. 如果替身已经 revealed，能力失效
-            if (currBox.visible == 'REVEALED') return [gameState, currIdx];
+            if (currBox.visible == SpotVisible.REVEALED)
+                return [gameState, currIdx];
             // 3. 此时判断是否是需要交换的替身，是的话，交换
             if (currIdx != chosen) return [gameState, currIdx + 1];
             [currBox, revealing] = SwapSpots(currBox, revealing);

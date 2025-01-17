@@ -1,4 +1,5 @@
 import Role, { RolesType } from '../../../models/role';
+import { SpotVisible } from '../../../models/spot';
 import { nearFour } from '../../../utils/graph';
 import Jammed from '../../buffs/jam';
 import { GameState } from '../../public/game';
@@ -34,7 +35,7 @@ const Jam = (): Role => {
                 // 如果相邻的spot是jam，并且还在隐藏状态，就对当前spot进行干扰
                 if (
                     nearSpot.role.id == 'jam' &&
-                    nearSpot.visible != 'REVEALED'
+                    nearSpot.visible != SpotVisible.REVEALED
                 ) {
                     currSpot.buffs.set(jammed.id, jammed);
                 }

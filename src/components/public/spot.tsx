@@ -75,7 +75,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                     (SearchAllSpots(gameState, box => {
                         return (
                             box.role.id == Copies().id &&
-                            box.visible != 'REVEALED'
+                            box.visible != SpotVisible.REVEALED
                         );
                     }).length +
                         1),

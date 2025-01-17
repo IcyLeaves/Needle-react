@@ -1,5 +1,5 @@
 import Role, { RolesType } from '../../../models/role';
-import { SpotBoxState } from '../../../models/spot';
+import { SpotBoxState, SpotVisible } from '../../../models/spot';
 import { nearFour } from '../../../utils/graph';
 import { GameState } from '../../public/game';
 
@@ -17,7 +17,7 @@ const Volunteer = (): Role => {
             revealing: SpotBoxState,
         ): GameState => {
             let currBox = gameState.spots[x][y];
-            if (currBox.visible != 'REVEALED') return gameState;
+            if (currBox.visible != SpotVisible.REVEALED) return gameState;
             if (currBox.role.id != 'volunteer') return gameState;
             var M = gameState.spots.length;
             var N = gameState.spots[0].length;

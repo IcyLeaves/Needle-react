@@ -1,5 +1,5 @@
 import Role, { RolesType } from '../../../models/role';
-import { SpotBoxState } from '../../../models/spot';
+import { SpotBoxState, SpotVisible } from '../../../models/spot';
 import { Killed, Killing } from '../../buffs/killer';
 import { GameState } from '../../public/game';
 import Target from '../target/target';
@@ -28,7 +28,7 @@ const Killer = (): Role => {
             // 2. 揭示了但没有Buff，不能激活
             let killing = Killing();
             let currBox = gameState.spots[x][y];
-            if (currBox.visible != 'REVEALED') return gameState;
+            if (currBox.visible != SpotVisible.REVEALED) return gameState;
             if (!currBox.buffs.has(killing.id)) return gameState;
             // 3. 揭示了且有Buff，可以激活
             if (revealing.role.id == Target().id) {

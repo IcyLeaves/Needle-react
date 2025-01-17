@@ -1,6 +1,6 @@
 import { nearEight } from '@/utils/graph';
 import Role, { RolesType } from '../../../models/role';
-import { SpotBoxState } from '../../../models/spot';
+import { SpotBoxState, SpotVisible } from '../../../models/spot';
 import { GameState } from '../../public/game';
 const Sheriff = (): Role => {
     return {
@@ -13,7 +13,7 @@ const Sheriff = (): Role => {
             var init = 8;
             var nears = nearEight(gameState.spots, x, y);
             for (var near of nears) {
-                if (!near || near.visible == 'REVEALED') init--;
+                if (!near || near.visible == SpotVisible.REVEALED) init--;
             }
             if (init == 0) {
                 gameState.chances = gameState.chances * 2 + 2;
