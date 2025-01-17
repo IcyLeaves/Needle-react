@@ -13,7 +13,7 @@ type GameProps = {
     config: GameConfig;
 };
 export type AnyFunction = (...args: any[]) => any;
-
+export type SearchSpotsFunction = (spot: SpotBoxState) => boolean;
 type GameState = {
     seed: string;
     chances: number;
@@ -25,6 +25,21 @@ type GameState = {
     onThatFlip: AnyFunction[];
     onRevealed: AnyFunction[];
     onThatRevealed: AnyFunction[];
+};
+
+const SearchAllSpots = (
+    gameState: GameState,
+    searchFn: SearchSpotsFunction,
+): SpotBoxState[] => {
+    let res: SpotBoxState[] = [];
+    for (let i = 0; i < gameState.spots.length; i++) {
+        for (let j = 0; j < gameState.spots[i].length; j++) {
+            if (searchFn(gameState.spots[i][j])) {
+                res.push(gameState.spots[i][j]);
+            }
+        }
+    }
+    return res;
 };
 
 type GameConfig = {
@@ -72,7 +87,7 @@ const InitSpotStates = (
                 x: i,
                 y: j,
                 role: deck.draw()!,
-                visible: SpotVisible.VISIBLE,
+                visible: SpotVisible.HIDDEN,
                 status: SpotStatus.IDLE,
                 buffs: new Map(),
             });
@@ -136,5 +151,5 @@ const Game: React.FC<GameProps> = ({ config }) => {
     );
 };
 
-export { Game };
+export { Game, SearchAllSpots };
 export type { GameConfig, GameDispatches, GameState };

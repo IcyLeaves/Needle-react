@@ -4,6 +4,7 @@ import {
     SpotBoxVisibleCss,
 } from '@/components/css/spot';
 import { useEffect, useState } from 'react';
+import seedrandom from 'seedrandom';
 import {
     SpotBoxProps,
     SpotBoxState,
@@ -13,12 +14,13 @@ import {
 import { nearEight } from '../../utils/graph';
 import { Buff } from '../buffs/buffs';
 import Jammed from '../buffs/jam';
+import Copies from '../roles/copies/copies';
 import Jam from '../roles/jam/jam';
 import Killer from '../roles/killer/killer';
 import Sheriff from '../roles/sheriff/sheriff';
 import Volunteer from '../roles/volunteer/volunteer';
 import Witch from '../roles/witch/witch';
-import { GameDispatches } from './game';
+import { GameDispatches, SearchAllSpots } from './game';
 
 const isLocked = (gameDispatches: GameDispatches, state: SpotBoxState) => {
     return (
@@ -30,9 +32,9 @@ const isLocked = (gameDispatches: GameDispatches, state: SpotBoxState) => {
 
 const SpotBox: React.FC<SpotBoxProps> = props => {
     const { boxState, gameDispatches } = props;
-    const { x, y, role, visible, status, buffs } = boxState;
+    let { x, y, role, visible, status, buffs } = boxState;
     let { gameState, setGameState } = gameDispatches;
-    const [state, setState] = useState<SpotBoxState>({
+    let [state, setState] = useState<SpotBoxState>({
         x: x,
         y: y,
         role: role,
@@ -66,9 +68,38 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         Jam().onBeforeRevealed!(gameState, x, y);
         if (!state.buffs.has(Jammed().id)) {
             // 揭露了，但翻开前先激活
-            for (let i = 0; i < gameState.spots.length; i++) {
+            // 随机一个替身
+            const random = seedrandom(gameState.seed);
+            var chosenCopyIdx = Math.floor(
+                random() *
+                    (SearchAllSpots(gameState, box => {
+                        return (
+                            box.role.id == Copies().id &&
+                            box.visible != 'REVEALED'
+                        );
+                    }).length +
+                        1),
+            );
+            let newBoxState: SpotBoxState;
+
+            for (let i = 0, copyIdx = 1; i < gameState.spots.length; i++) {
                 for (let j = 0; j < gameState.spots[i].length; j++) {
                     gameState = Witch().onActivating!(gameState, i, j, state);
+
+                    [gameState, copyIdx, newBoxState] = Copies().onActivating!(
+                        gameState,
+                        i,
+                        j,
+                        state,
+                        copyIdx,
+                        chosenCopyIdx,
+                    );
+                    if (newBoxState) {
+                        role = newBoxState.role;
+                        visible = newBoxState.visible;
+                        status = newBoxState.status;
+                        buffs = newBoxState.buffs;
+                    }
                 }
             }
 

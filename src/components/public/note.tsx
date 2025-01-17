@@ -19,6 +19,7 @@ import Witch from '../roles/witch/witch';
 import { GameDispatches } from './game';
 import { RoleLabel } from './role';
 
+// 人物进度表
 const FoundProgress: React.FC<{ gameDispatches: GameDispatches }> = props => {
     const { gameDispatches } = props;
     const { gameState } = gameDispatches;
@@ -28,6 +29,7 @@ const FoundProgress: React.FC<{ gameDispatches: GameDispatches }> = props => {
             total: number;
         };
     };
+    // 根据揭示状态更新进度表
     let roleMap: RoleMap = {};
     for (let i = 0; i < gameState.spots.length; i++) {
         for (let j = 0; j < gameState.spots[i].length; j++) {
@@ -49,7 +51,6 @@ const FoundProgress: React.FC<{ gameDispatches: GameDispatches }> = props => {
         }
     }
     let res = <></>;
-    //TODO fix order
     let roleMapKeysKeys = [
         Target().id,
         Citizen().id,
@@ -80,6 +81,7 @@ const FoundProgress: React.FC<{ gameDispatches: GameDispatches }> = props => {
     );
 };
 
+// 一行进度
 const Note: React.FC<{ role: Role; found: number; total: number }> = props => {
     const { role, found, total } = props;
     return (
