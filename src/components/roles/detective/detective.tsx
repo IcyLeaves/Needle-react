@@ -10,7 +10,6 @@ const Detective = (): Role => {
         type: RolesType.LIGHT,
         onRevealed: (gameState: GameState) => {
             gameState.chances = gameState.chances + 2;
-            console.log('Detective onRevealed');
             return gameState;
         },
     };
