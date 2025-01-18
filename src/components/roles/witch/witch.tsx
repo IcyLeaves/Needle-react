@@ -33,6 +33,14 @@ const Witch = (): Role => {
             if (revealing.role.type == RolesType.DARK) {
                 gameState.chances = 1;
             }
+
+            return gameState;
+        },
+        onFlip: (gameState: GameState, x: number, y: number): GameState => {
+            let cursing = Cursing();
+            let currBox = gameState.spots[x][y];
+            if (currBox.visible != SpotVisible.REVEALED) return gameState;
+            if (!currBox.buffs.has(cursing.id)) return gameState;
             // 3.1 如果激活了，idx加1
             currBox.buffs.get(cursing.id)!.idx =
                 currBox.buffs.get(cursing.id)!.idx! + 1;

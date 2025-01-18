@@ -34,8 +34,3 @@
     - 当特定位置现身时：OnThatRevealed(x,y)
 - 轮次结束时：OnRoundOver
     - 检查游戏结束时：OnCheckingGameEnd
-
-
-    点了绿色还能玩
-    女巫没和？联动
-    替身还是没换掉问号后面的目标 56578

@@ -56,6 +56,12 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         if (state.visible === SpotVisible.REVEALED) {
             return;
         }
+        // 进入点击
+        for (let i = 0; i < gameState.spots.length; i++) {
+            for (let j = 0; j < gameState.spots[i].length; j++) {
+                gameState = Witch().onFlip!(gameState, i, j);
+            }
+        }
         for (let i = 0; i < gameState.spots.length; i++) {
             for (let j = 0; j < gameState.spots[i].length; j++) {
                 gameState = Volunteer().onActivating!(gameState, i, j, state);
@@ -64,7 +70,6 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         // 消耗线索
         gameState.chances = gameState.chances - 1;
 
-        //
         Jam().onBeforeRevealed!(gameState, x, y);
         if (!state.buffs.has(Jammed().id)) {
             // 揭露了，但翻开前先激活
@@ -72,13 +77,13 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             const random = seedrandom(gameState.seed);
             var chosenCopyIdx = Math.floor(
                 random() *
-                    (SearchAllSpots(gameState, box => {
+                    SearchAllSpots(gameState, box => {
                         return (
                             box.role.id == Copies().id &&
                             box.visible != SpotVisible.REVEALED
                         );
                     }).length +
-                        1),
+                    1,
             );
             let newBoxState: SpotBoxState;
 
@@ -127,7 +132,6 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         }
 
         gameState.clicks = gameState.clicks + 1;
-
         setGameState(gameState);
     };
 

@@ -3,6 +3,7 @@ import { GameState } from '../../public/game';
 
 import Role, { RolesType } from '../../../models/role';
 import Target from '../target/target';
+import Pointing from '../../buffs/copies';
 const Copies = (): Role => {
     return {
         id: 'copies',
@@ -30,9 +31,25 @@ const Copies = (): Role => {
             // 3. 此时判断是否是需要交换的替身，是的话，交换
             if (currIdx != chosen) return [gameState, currIdx + 1];
             [currBox, revealing] = SwapSpots(currBox, revealing);
+            // 4. 交换后，替身指出新目标的方位
+            let [cX, cY] = [revealing.x, revealing.y];
+            let [tX, tY] = [currBox.x, currBox.y];
+            revealing.buffs.set(Pointing().id, Pointing());
+            revealing.buffs.get(Pointing().id)!.idx = getIdx(cX, cY, tX, tY);
             return [gameState, currIdx + 1, revealing];
         },
     };
 };
 
+const getIdx = (i: number, j: number, x: number, y: number): number => {
+    let dx: number;
+    let dy: number;
+    if (x < i) dx = 0;
+    else if (x == i) dx = 1;
+    else dx = 2;
+    if (y < j) dy = 0;
+    else if (y == j) dy = 1;
+    else dy = 2;
+    return dx * 3 + dy;
+};
 export default Copies;

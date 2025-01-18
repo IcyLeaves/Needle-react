@@ -87,7 +87,7 @@ const InitSpotStates = (
                 x: i,
                 y: j,
                 role: deck.draw()!,
-                visible: SpotVisible.HIDDEN,
+                visible: SpotVisible.VISIBLE,
                 status: SpotStatus.IDLE,
                 buffs: new Map(),
             });
