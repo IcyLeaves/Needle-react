@@ -13,8 +13,10 @@ import {
 } from '../../models/spot';
 import { nearEight } from '../../utils/graph';
 import { Buff } from '../buffs/buffs';
+import MoneyBag from '../buffs/fortune';
 import Jammed from '../buffs/jam';
 import Copies from '../roles/copies/copies';
+import Fortune from '../roles/fortune/fortune';
 import Jam from '../roles/jam/jam';
 import Killer from '../roles/killer/killer';
 import Sheriff from '../roles/sheriff/sheriff';
@@ -124,6 +126,9 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                 //揭露时
                 gameState = role.onRevealed(gameState, x, y);
             }
+            if (state.role.id != Fortune().id) {
+                gameState = Fortune().onRevealed!(gameState, x, y);
+            }
             for (let i = 0; i < gameState.spots.length; i++) {
                 for (let j = 0; j < gameState.spots[i].length; j++) {
                     gameState = Killer().onActivating!(gameState, i, j, state);
@@ -175,6 +180,12 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             }}
         >
             {Array.from(state.buffs.values()).map((buff: Buff): JSX.Element => {
+                if (
+                    buff.id === MoneyBag().id &&
+                    state.visible === SpotVisible.HIDDEN
+                ) {
+                    return <></>;
+                }
                 let buffIcon = buff.icon[0];
                 if (buff.idx) {
                     buffIcon = buff.icon[buff.idx];

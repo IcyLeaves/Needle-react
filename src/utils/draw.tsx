@@ -21,6 +21,10 @@ class Deck<T> {
     public draw(): T | undefined {
         return this.deck.pop();
     }
+
+    public count(): number {
+        return this.deck.length;
+    }
 }
 
 export default Deck;

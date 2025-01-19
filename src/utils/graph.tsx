@@ -16,7 +16,7 @@ const nearFour = (
     for (var i = 0; i < 4; i++) {
         var nx = x + dx[i];
         var ny = y + dy[i];
-        if (nx < 0 || nx >= M || ny < 0 || ny >= M) {
+        if (nx < 0 || nx >= M || ny < 0 || ny >= N) {
             res.push(undefined);
             continue;
         }
@@ -41,7 +41,7 @@ function nearEight<T>(
             if (i == 1 && j == 1) continue;
             var nx = x + d[i];
             var ny = y + d[j];
-            if (nx < 0 || nx >= M || ny < 0 || ny >= M) {
+            if (nx < 0 || nx >= M || ny < 0 || ny >= N) {
                 res.push(undefined);
                 continue;
             }
