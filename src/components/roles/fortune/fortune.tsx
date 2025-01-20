@@ -1,6 +1,6 @@
 import Role, { RolesType } from '../../../models/role';
 import { SpotBoxState, SpotVisible } from '../../../models/spot';
-import Deck from '../../../utils/draw';
+import { Deck } from '../../../utils/draw';
 import { nearFour } from '../../../utils/graph';
 import MoneyBag from '../../buffs/fortune';
 import { GameState, SearchAllSpots } from '../../public/game';
@@ -44,7 +44,11 @@ const Fortune = (): Role => {
                     },
                 );
                 // 2. 随机选一个
-                let deck = new Deck<SpotBoxState>(hiddens, gameState.seed);
+                let deck = new Deck<SpotBoxState>(
+                    hiddens,
+                    gameState.seed.seed,
+                    gameState.seed.random,
+                );
                 let chosen = deck.draw();
                 while (
                     !chosen ||

@@ -14,6 +14,7 @@ type Role = {
     onBeforeRevealed?: AnyFunction;
     onRevealed?: AnyFunction;
     onActivating?: AnyFunction;
+    onRoundOver?: AnyFunction;
 };
 
 export default Role;

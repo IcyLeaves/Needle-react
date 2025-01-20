@@ -1,5 +1,5 @@
 import Role, { RolesType } from '../../../models/role';
-import Deck from '../../../utils/draw';
+import { Deck } from '../../../utils/draw';
 import { MOON, SUN } from '../../buffs/augur';
 import { GameState } from '../../public/game';
 
@@ -21,7 +21,8 @@ const Augur = (): Role => {
             }
             let deck = new Deck<{ x: number; y: number }>(
                 pointers,
-                gameState.seed,
+                gameState.seed.seed,
+                gameState.seed.random,
             );
             let pointer = deck.draw();
             while (pointer) {

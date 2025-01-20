@@ -52,3 +52,4 @@ function nearEight<T>(
 }
 
 export { nearEight, nearFour };
+export type { Point };

@@ -27,7 +27,7 @@ type SpotBoxState = {
     // buffs
     buffs: Map<string, Buff>;
     // attrs
-    attrs?: Map<string, any>;
+    attrs: Map<string, any>;
 };
 
 const SwapSpots = (

@@ -4,7 +4,6 @@ import {
     SpotBoxVisibleCss,
 } from '@/components/css/spot';
 import { useEffect, useState } from 'react';
-import seedrandom from 'seedrandom';
 import {
     SpotBoxProps,
     SpotBoxState,
@@ -14,9 +13,11 @@ import {
 import { nearEight } from '../../utils/graph';
 import { Buff } from '../buffs/buffs';
 import MoneyBag from '../buffs/fortune';
+import { Bro, Stop } from '../buffs/ganster';
 import Jammed from '../buffs/jam';
 import Copies from '../roles/copies/copies';
 import Fortune from '../roles/fortune/fortune';
+import Ganster from '../roles/ganster/ganster';
 import Jam from '../roles/jam/jam';
 import Killer from '../roles/killer/killer';
 import Sheriff from '../roles/sheriff/sheriff';
@@ -28,13 +29,15 @@ const isLocked = (gameDispatches: GameDispatches, state: SpotBoxState) => {
     return (
         state.status === SpotStatus.LOCKED ||
         gameDispatches.gameState === undefined ||
-        gameDispatches.setGameState === undefined
+        gameDispatches.setGameState === undefined ||
+        state.buffs.get(Stop().id) !== undefined ||
+        state.buffs.get(Bro().id) !== undefined
     );
 };
 
 const SpotBox: React.FC<SpotBoxProps> = props => {
     const { boxState, gameDispatches } = props;
-    let { x, y, role, visible, status, buffs } = boxState;
+    let { x, y, role, visible, status, buffs, attrs } = boxState;
     let { gameState, setGameState } = gameDispatches;
     let [state, setState] = useState<SpotBoxState>({
         x: x,
@@ -43,6 +46,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         visible: visible,
         status: status,
         buffs: buffs,
+        attrs: attrs,
     });
     const handleClick = (event: any) => {
         if (isLocked(gameDispatches, state)) {
@@ -69,6 +73,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                 gameState = Volunteer().onActivating!(gameState, i, j, state);
             }
         }
+
         // 消耗线索
         gameState.chances = gameState.chances - 1;
 
@@ -76,20 +81,18 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         if (!state.buffs.has(Jammed().id)) {
             // 揭露了，但翻开前先激活
             // 随机一个替身
-            const random = seedrandom(gameState.seed);
-            var chosenCopyIdx = Math.floor(
-                random() *
-                    SearchAllSpots(gameState, box => {
-                        return (
-                            box.role.id == Copies().id &&
-                            box.visible != SpotVisible.REVEALED
-                        );
-                    }).length +
-                    1,
+
+            var chosenCopyIdx = gameState.seed.intVal(
+                SearchAllSpots(gameState, box => {
+                    return (
+                        box.role.id == Copies().id &&
+                        box.visible != SpotVisible.REVEALED
+                    );
+                }).length,
             );
             let newBoxState: SpotBoxState;
 
-            for (let i = 0, copyIdx = 1; i < gameState.spots.length; i++) {
+            for (let i = 0, copyIdx = 0; i < gameState.spots.length; i++) {
                 for (let j = 0; j < gameState.spots[i].length; j++) {
                     gameState = Witch().onActivating!(gameState, i, j, state);
 
@@ -122,6 +125,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                     state,
                 );
             }
+
             if (role.onRevealed) {
                 //揭露时
                 gameState = role.onRevealed(gameState, x, y);
@@ -135,6 +139,12 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                 }
             }
         }
+        for (let i = 0; i < gameState.spots.length; i++) {
+            for (let j = 0; j < gameState.spots[i].length; j++) {
+                gameState = Ganster().onActivating!(gameState, i, j);
+            }
+        }
+        gameState = Ganster().onRoundOver!(gameState);
 
         gameState.clicks = gameState.clicks + 1;
         setGameState(gameState);
