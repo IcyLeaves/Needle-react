@@ -23,7 +23,8 @@ import Killer from '../roles/killer/killer';
 import Sheriff from '../roles/sheriff/sheriff';
 import Volunteer from '../roles/volunteer/volunteer';
 import Witch from '../roles/witch/witch';
-import { GameDispatches, SearchAllSpots } from './game';
+import { GameDispatches, GameStatus, SearchAllSpots } from './game';
+import BangBang from '../roles/bangbang/bangbang';
 
 const isLocked = (gameDispatches: GameDispatches, state: SpotBoxState) => {
     return (
@@ -62,90 +63,129 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         if (state.visible === SpotVisible.REVEALED) {
             return;
         }
-        // 进入点击
-        for (let i = 0; i < gameState.spots.length; i++) {
-            for (let j = 0; j < gameState.spots[i].length; j++) {
-                gameState = Witch().onFlip!(gameState, i, j);
-            }
-        }
-        for (let i = 0; i < gameState.spots.length; i++) {
-            for (let j = 0; j < gameState.spots[i].length; j++) {
-                gameState = Volunteer().onActivating!(gameState, i, j, state);
-            }
-        }
-
-        // 消耗线索
-        gameState.chances = gameState.chances - 1;
-
-        Jam().onBeforeRevealed!(gameState, x, y);
-        if (!state.buffs.has(Jammed().id)) {
-            // 揭露了，但翻开前先激活
-            // 随机一个替身
-
-            var chosenCopyIdx = gameState.seed.intVal(
-                SearchAllSpots(gameState, box => {
-                    return (
-                        box.role.id == Copies().id &&
-                        box.visible != SpotVisible.REVEALED
-                    );
-                }).length - 1,
-            );
-            let newBoxState: SpotBoxState;
-
-            for (let i = 0, copyIdx = 0; i < gameState.spots.length; i++) {
-                for (let j = 0; j < gameState.spots[i].length; j++) {
-                    gameState = Witch().onActivating!(gameState, i, j, state);
-
-                    [gameState, copyIdx, newBoxState] = Copies().onActivating!(
-                        gameState,
-                        i,
-                        j,
-                        state,
-                        copyIdx,
-                        chosenCopyIdx,
-                    );
-                    if (newBoxState) {
-                        role = newBoxState.role;
-                        visible = newBoxState.visible;
-                        status = newBoxState.status;
-                        buffs = newBoxState.buffs;
+        //可以正常进入点击吗？
+        switch (gameState.status) {
+            case GameStatus.REVEALING:
+                // 进入点击
+                for (let i = 0; i < gameState.spots.length; i++) {
+                    for (let j = 0; j < gameState.spots[i].length; j++) {
+                        gameState = Witch().onFlip!(gameState, i, j);
                     }
                 }
-            }
-
-            gameState.spots[state.x][state.y].visible = SpotVisible.REVEALED;
-            // sheriff
-            let nears = nearEight(gameState.spots, x, y);
-            for (var near of nears) {
-                if (!near) continue;
-                gameState = Sheriff().onActivating!(
-                    gameState,
-                    near.x,
-                    near.y,
-                    state,
-                );
-            }
-
-            if (role.onRevealed) {
-                //揭露时
-                gameState = role.onRevealed(gameState, x, y);
-            }
-            if (state.role.id != Fortune().id) {
-                gameState = Fortune().onRevealed!(gameState, x, y);
-            }
-            for (let i = 0; i < gameState.spots.length; i++) {
-                for (let j = 0; j < gameState.spots[i].length; j++) {
-                    gameState = Killer().onActivating!(gameState, i, j, state);
+                for (let i = 0; i < gameState.spots.length; i++) {
+                    for (let j = 0; j < gameState.spots[i].length; j++) {
+                        gameState = Volunteer().onActivating!(
+                            gameState,
+                            i,
+                            j,
+                            state,
+                        );
+                    }
                 }
-            }
-        }
-        for (let i = 0; i < gameState.spots.length; i++) {
-            for (let j = 0; j < gameState.spots[i].length; j++) {
-                gameState = Ganster().onActivating!(gameState, i, j);
-            }
-        }
-        gameState = Ganster().onRoundOver!(gameState);
 
+                // 消耗线索
+                gameState.chances = gameState.chances - 1;
+
+                Jam().onBeforeRevealed!(gameState, x, y);
+                if (!state.buffs.has(Jammed().id)) {
+                    // 揭露了，但翻开前先激活
+                    // 随机一个替身
+
+                    var chosenCopyIdx = gameState.seed.intVal(
+                        SearchAllSpots(gameState, box => {
+                            return (
+                                box.role.id == Copies().id &&
+                                box.visible != SpotVisible.REVEALED
+                            );
+                        }).length - 1,
+                    );
+                    let newBoxState: SpotBoxState;
+
+                    for (
+                        let i = 0, copyIdx = 0;
+                        i < gameState.spots.length;
+                        i++
+                    ) {
+                        for (let j = 0; j < gameState.spots[i].length; j++) {
+                            gameState = Witch().onActivating!(
+                                gameState,
+                                i,
+                                j,
+                                state,
+                            );
+
+                            [gameState, copyIdx, newBoxState] = Copies()
+                                .onActivating!(
+                                gameState,
+                                i,
+                                j,
+                                state,
+                                copyIdx,
+                                chosenCopyIdx,
+                            );
+                            if (newBoxState) {
+                                role = newBoxState.role;
+                                visible = newBoxState.visible;
+                                status = newBoxState.status;
+                                buffs = newBoxState.buffs;
+                            }
+                        }
+                    }
+
+                    gameState.spots[state.x][state.y].visible =
+                        SpotVisible.REVEALED;
+                    // sheriff
+                    let nears = nearEight(gameState.spots, x, y);
+                    for (var near of nears) {
+                        if (!near) continue;
+                        gameState = Sheriff().onActivating!(
+                            gameState,
+                            near.x,
+                            near.y,
+                            state,
+                        );
+                    }
+
+                    if (role.onRevealed) {
+                        //揭露时
+                        gameState = role.onRevealed(gameState, x, y);
+                    }
+                    if (state.role.id != Fortune().id) {
+                        gameState = Fortune().onRevealed!(gameState, x, y);
+                    }
+                    for (let i = 0; i < gameState.spots.length; i++) {
+                        for (let j = 0; j < gameState.spots[i].length; j++) {
+                            gameState = Killer().onActivating!(
+                                gameState,
+                                i,
+                                j,
+                                state,
+                            );
+                        }
+                    }
+                }
+                for (let i = 0; i < gameState.spots.length; i++) {
+                    for (let j = 0; j < gameState.spots[i].length; j++) {
+                        gameState = Ganster().onActivating!(gameState, i, j);
+                    }
+                }
+                gameState = Ganster().onRoundOver!(gameState);
+                break;
+            case GameStatus.SHOOTING:
+                // 进入射击, TODO OnShooting
+                for (let i = 0; i < gameState.spots.length; i++) {
+                    for (let j = 0; j < gameState.spots[i].length; j++) {
+                        gameState = BangBang().onActivating!(
+                            gameState,
+                            i,
+                            j,
+                            x,
+                            y,
+                        );
+                    }
+                }
+                break;
+        }
         gameState.clicks = gameState.clicks + 1;
         setGameState(gameState);
     };

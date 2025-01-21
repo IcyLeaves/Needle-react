@@ -19,6 +19,7 @@ type GameState = {
     chances: number;
     spots: SpotBoxState[][];
     clicks: number;
+    status: GameStatus;
     isGameOver: boolean;
     onRoundStart: AnyFunction[];
     onFlip: AnyFunction[];
@@ -27,6 +28,10 @@ type GameState = {
     onThatRevealed: AnyFunction[];
 };
 
+export enum GameStatus {
+    REVEALING = 'revealing',
+    SHOOTING = 'shooting',
+}
 const SearchAllSpots = (
     gameState: GameState,
     searchFn: SearchSpotsFunction,
@@ -103,6 +108,7 @@ const Game: React.FC<GameProps> = ({ config }) => {
         chances: config.chances,
         clicks: 0,
         spots: InitSpotStates(InitSpotDeck(config), config),
+        status: GameStatus.REVEALING,
         onRoundStart: [],
         onFlip: [],
         onThatFlip: [],
@@ -130,7 +136,13 @@ const Game: React.FC<GameProps> = ({ config }) => {
             <div style={{ display: 'none' }} key={key}></div>
             <div style={styled.gameModeStyle}>{state.chances}</div>
             <Divider />
-            <Row>
+            <Row
+                style={
+                    state.status === GameStatus.SHOOTING
+                        ? styled.BangCursorStyle
+                        : {}
+                }
+            >
                 <Col span={6}>
                     <b style={styled.sideTitleStyle}>说明</b>
                     <div id="description-board" style={styled.sideColStyle}>
