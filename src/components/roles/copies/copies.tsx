@@ -28,6 +28,7 @@ const Copies = (): Role => {
             // 2. 如果替身已经 revealed，能力失效
             if (currBox.visible == SpotVisible.REVEALED)
                 return [gameState, currIdx];
+
             // 3. 此时判断是否是需要交换的替身，是的话，交换
             if (currIdx != chosen) return [gameState, currIdx + 1];
             [currBox, revealing] = SwapSpots(currBox, revealing);

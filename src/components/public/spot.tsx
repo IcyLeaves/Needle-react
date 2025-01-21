@@ -88,7 +88,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                         box.role.id == Copies().id &&
                         box.visible != SpotVisible.REVEALED
                     );
-                }).length,
+                }).length - 1,
             );
             let newBoxState: SpotBoxState;
 
