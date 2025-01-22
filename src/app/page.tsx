@@ -17,6 +17,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect } from 'react';
 import { Game, GameConfig } from '../components/public/game';
+import { Tutorial } from '../components/public/tutorial';
 import Augur from '../components/roles/augur/augur';
 import BangBang from '../components/roles/bangbang/bangbang';
 import Copies from '../components/roles/copies/copies';
@@ -66,6 +67,7 @@ const App: React.FC = () => {
         },
         seed: seed!.toString(),
     };
+    const [tutorialOpened, setTutorialOpened] = React.useState(false);
     return (
         <ConfigProvider
             theme={{
@@ -92,9 +94,17 @@ const App: React.FC = () => {
                                 <Button
                                     style={styled.titleIconStyle}
                                     size="large"
+                                    onClick={() => {
+                                        console.log('open tutorial');
+                                        setTutorialOpened(true);
+                                    }}
                                 >
                                     <QuestionCircleFilled />
                                 </Button>
+                                <Tutorial
+                                    open={tutorialOpened}
+                                    setOpen={setTutorialOpened}
+                                ></Tutorial>
                                 <Button
                                     style={styled.titleIconStyle}
                                     size="large"
