@@ -52,6 +52,7 @@ const RoleInfoCard: React.FC<{
                                         visible: SpotVisible.REVEALED,
                                         status: SpotStatus.LOCKED,
                                         buffs: new Map(),
+                                        attrs: new Map(),
                                         x: -1,
                                         y: -1,
                                     }}

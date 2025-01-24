@@ -216,7 +216,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         }
         oldGameState.spots[state.x][state.y] = state;
         setGameState(oldGameState);
-    }, [state, gameState]);
+    }, [state, gameState, gameDispatches.gameState, setGameState]);
 
     return (
         <div

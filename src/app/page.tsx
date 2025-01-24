@@ -36,12 +36,13 @@ const App: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const seed = searchParams.get('seed');
+    const [tutorialOpened, setTutorialOpened] = React.useState(false);
     useEffect(() => {
         if (!seed) {
             const randomSeed = Math.floor(Math.random() * 1000000).toString();
             router.push('?seed=' + randomSeed);
         }
-    }, [router]);
+    }, [router, seed]);
     if (!seed) {
         return <></>;
     }
@@ -67,7 +68,7 @@ const App: React.FC = () => {
         },
         seed: seed!.toString(),
     };
-    const [tutorialOpened, setTutorialOpened] = React.useState(false);
+
     return (
         <ConfigProvider
             theme={{
@@ -95,7 +96,6 @@ const App: React.FC = () => {
                                     style={styled.titleIconStyle}
                                     size="large"
                                     onClick={() => {
-                                        console.log('open tutorial');
                                         setTutorialOpened(true);
                                     }}
                                 >
