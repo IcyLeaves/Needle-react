@@ -92,8 +92,11 @@ const sideColStyle: React.CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
 };
-
+const BangCursorStyle: React.CSSProperties = {
+    cursor: 'url("/target.png"), auto',
+};
 export {
+    BangCursorStyle,
     bigTitleStyle,
     colCenterStyle,
     contentStyle,

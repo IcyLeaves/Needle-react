@@ -12,6 +12,7 @@ const SpotBoxCss: React.CSSProperties = {
     alignItems: 'center',
     position: 'relative',
     minWidth: '3rem',
+    flexWrap: 'wrap',
 };
 
 const SpotBoxVisibleCss = (visible: SpotVisible): React.CSSProperties => {

@@ -1,5 +1,5 @@
 import Role, { RolesType } from '../../../models/role';
-import { SpotBoxState } from '../../../models/spot';
+import { SpotBoxState, SpotVisible } from '../../../models/spot';
 import Cursing from '../../buffs/witch';
 import { GameState } from '../../public/game';
 
@@ -22,17 +22,25 @@ const Witch = (): Role => {
             x: number,
             y: number,
             revealing: SpotBoxState,
-        ) => {
+        ): GameState => {
             // 1. 没有揭示，不能激活
             // 2. 揭示了但没有Buff，不能激活
             let cursing = Cursing();
             let currBox = gameState.spots[x][y];
-            if (currBox.visible != 'REVEALED') return;
-            if (!currBox.buffs.has(cursing.id)) return;
+            if (currBox.visible != SpotVisible.REVEALED) return gameState;
+            if (!currBox.buffs.has(cursing.id)) return gameState;
             // 3. 揭示了且有Buff，可以激活
             if (revealing.role.type == RolesType.DARK) {
                 gameState.chances = 1;
             }
+
+            return gameState;
+        },
+        onFlip: (gameState: GameState, x: number, y: number): GameState => {
+            let cursing = Cursing();
+            let currBox = gameState.spots[x][y];
+            if (currBox.visible != SpotVisible.REVEALED) return gameState;
+            if (!currBox.buffs.has(cursing.id)) return gameState;
             // 3.1 如果激活了，idx加1
             currBox.buffs.get(cursing.id)!.idx =
                 currBox.buffs.get(cursing.id)!.idx! + 1;

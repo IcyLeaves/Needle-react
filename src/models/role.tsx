@@ -10,9 +10,11 @@ type Role = {
     name: string;
     description: string;
     type: RolesType;
-    onRevealed?: AnyFunction;
+    onFlip?: AnyFunction;
     onBeforeRevealed?: AnyFunction;
+    onRevealed?: AnyFunction;
     onActivating?: AnyFunction;
+    onRoundOver?: AnyFunction;
 };
 
 export default Role;

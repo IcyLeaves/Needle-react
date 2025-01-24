@@ -4,7 +4,7 @@ import { Col, Divider, Flex, Row } from 'antd';
 import React, { Dispatch, useState } from 'react';
 import Role from '../../models/role';
 import { SpotBoxState, SpotStatus, SpotVisible } from '../../models/spot';
-import Deck from '../../utils/draw';
+import { Deck, Seed } from '../../utils/draw';
 import str2role from '../roles/roles';
 import Board from './board';
 import { Info } from './info';
@@ -13,17 +13,38 @@ type GameProps = {
     config: GameConfig;
 };
 export type AnyFunction = (...args: any[]) => any;
-
+export type SearchSpotsFunction = (spot: SpotBoxState) => boolean;
 type GameState = {
+    seed: Seed;
     chances: number;
     spots: SpotBoxState[][];
     clicks: number;
+    status: GameStatus;
     isGameOver: boolean;
     onRoundStart: AnyFunction[];
     onFlip: AnyFunction[];
     onThatFlip: AnyFunction[];
     onRevealed: AnyFunction[];
     onThatRevealed: AnyFunction[];
+};
+
+export enum GameStatus {
+    REVEALING = 'revealing',
+    SHOOTING = 'shooting',
+}
+const SearchAllSpots = (
+    gameState: GameState,
+    searchFn: SearchSpotsFunction,
+): SpotBoxState[] => {
+    let res: SpotBoxState[] = [];
+    for (let i = 0; i < gameState.spots.length; i++) {
+        for (let j = 0; j < gameState.spots[i].length; j++) {
+            if (searchFn(gameState.spots[i][j])) {
+                res.push(gameState.spots[i][j]);
+            }
+        }
+    }
+    return res;
 };
 
 type GameConfig = {
@@ -56,7 +77,7 @@ const InitSpotDeck = (config: GameConfig): Deck<Role> => {
             deck.push(spot);
         }
     }
-    return new Deck<Role>(deck, config.seed);
+    return new Deck<Role>(deck, config.seed, undefined);
 };
 
 const InitSpotStates = (
@@ -71,9 +92,10 @@ const InitSpotStates = (
                 x: i,
                 y: j,
                 role: deck.draw()!,
-                visible: SpotVisible.VISIBLE,
+                visible: SpotVisible.HIDDEN, // dev use VISIBLE
                 status: SpotStatus.IDLE,
                 buffs: new Map(),
+                attrs: new Map(),
             });
         }
     }
@@ -82,9 +104,11 @@ const InitSpotStates = (
 
 const Game: React.FC<GameProps> = ({ config }) => {
     const [state, updateState] = useState<GameState>({
+        seed: new Seed(config.seed),
         chances: config.chances,
         clicks: 0,
         spots: InitSpotStates(InitSpotDeck(config), config),
+        status: GameStatus.REVEALING,
         onRoundStart: [],
         onFlip: [],
         onThatFlip: [],
@@ -112,7 +136,13 @@ const Game: React.FC<GameProps> = ({ config }) => {
             <div style={{ display: 'none' }} key={key}></div>
             <div style={styled.gameModeStyle}>{state.chances}</div>
             <Divider />
-            <Row>
+            <Row
+                style={
+                    state.status === GameStatus.SHOOTING
+                        ? styled.BangCursorStyle
+                        : {}
+                }
+            >
                 <Col span={6}>
                     <b style={styled.sideTitleStyle}>说明</b>
                     <div id="description-board" style={styled.sideColStyle}>
@@ -134,5 +164,5 @@ const Game: React.FC<GameProps> = ({ config }) => {
     );
 };
 
-export { Game };
+export { Game, SearchAllSpots };
 export type { GameConfig, GameDispatches, GameState };

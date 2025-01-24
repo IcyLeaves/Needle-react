@@ -17,6 +17,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect } from 'react';
 import { Game, GameConfig } from '../components/public/game';
+import { Tutorial } from '../components/public/tutorial';
 import Augur from '../components/roles/augur/augur';
 import BangBang from '../components/roles/bangbang/bangbang';
 import Copies from '../components/roles/copies/copies';
@@ -35,12 +36,13 @@ const App: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const seed = searchParams.get('seed');
+    const [tutorialOpened, setTutorialOpened] = React.useState(false);
     useEffect(() => {
         if (!seed) {
             const randomSeed = Math.floor(Math.random() * 1000000).toString();
             router.push('?seed=' + randomSeed);
         }
-    }, [router]);
+    }, [router, seed]);
     if (!seed) {
         return <></>;
     }
@@ -66,6 +68,7 @@ const App: React.FC = () => {
         },
         seed: seed!.toString(),
     };
+
     return (
         <ConfigProvider
             theme={{
@@ -92,9 +95,16 @@ const App: React.FC = () => {
                                 <Button
                                     style={styled.titleIconStyle}
                                     size="large"
+                                    onClick={() => {
+                                        setTutorialOpened(true);
+                                    }}
                                 >
                                     <QuestionCircleFilled />
                                 </Button>
+                                <Tutorial
+                                    open={tutorialOpened}
+                                    setOpen={setTutorialOpened}
+                                ></Tutorial>
                                 <Button
                                     style={styled.titleIconStyle}
                                     size="large"
