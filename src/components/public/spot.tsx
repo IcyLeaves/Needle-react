@@ -4,6 +4,7 @@ import {
     SpotBoxVisibleCss,
 } from '@/components/css/spot';
 import { useEffect, useState } from 'react';
+import { DefaultSpotBoxState } from '../../models/role';
 import {
     SpotBoxProps,
     SpotBoxState,
@@ -15,6 +16,7 @@ import { Buff } from '../buffs/buffs';
 import MoneyBag from '../buffs/fortune';
 import { Bro, Stop } from '../buffs/ganster';
 import Jammed from '../buffs/jam';
+import BangBang from '../roles/bangbang/bangbang';
 import Copies from '../roles/copies/copies';
 import Fortune from '../roles/fortune/fortune';
 import Ganster from '../roles/ganster/ganster';
@@ -24,7 +26,6 @@ import Sheriff from '../roles/sheriff/sheriff';
 import Volunteer from '../roles/volunteer/volunteer';
 import Witch from '../roles/witch/witch';
 import { GameDispatches, GameStatus, SearchAllSpots } from './game';
-import BangBang from '../roles/bangbang/bangbang';
 
 const isLocked = (gameDispatches: GameDispatches, state: SpotBoxState) => {
     return (
@@ -54,8 +55,8 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             return;
         }
 
-        // 没有线索不能点击
-        if (gameState.chances === 0) {
+        // 游戏结束不能点击
+        if (gameState.isGameOver) {
             return;
         }
 
@@ -187,26 +188,30 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                 break;
         }
         gameState.clicks = gameState.clicks + 1;
+        if (gameState.chances <= 0) {
+            gameState.isGameOver = true;
+            gameState.isWin = false;
+        }
         setGameState(gameState);
     };
 
     const handleMouseEnter = (event: any) => {
-        if (isLocked(gameDispatches, state) || !gameDispatches.setInfoRoles) {
+        if (isLocked(gameDispatches, state) || !gameDispatches.setinfoSpot) {
             return;
         }
         if (state.visible === SpotVisible.HIDDEN) {
-            gameDispatches.setInfoRoles([]);
+            gameDispatches.setinfoSpot(DefaultSpotBoxState);
             return;
         }
-        gameDispatches.setInfoRoles([state.role]);
+        gameDispatches.setinfoSpot(state);
     };
 
     const handleMouseLeave = (event: any) => {
-        if (isLocked(gameDispatches, state) || !gameDispatches.setInfoRoles) {
+        if (isLocked(gameDispatches, state) || !gameDispatches.setinfoSpot) {
             return;
         }
 
-        gameDispatches.setInfoRoles([]);
+        gameDispatches.setinfoSpot(DefaultSpotBoxState);
     };
 
     useEffect(() => {
@@ -216,7 +221,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         }
         oldGameState.spots[state.x][state.y] = state;
         setGameState(oldGameState);
-    }, [state, gameState, gameDispatches.gameState, setGameState]);
+    }, [state, gameState, gameDispatches.gameState]);
 
     return (
         <div

@@ -16,6 +16,7 @@ import {
 } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect } from 'react';
+import Awards from '../components/public/award';
 import { Game, GameConfig } from '../components/public/game';
 import { Tutorial } from '../components/public/tutorial';
 import Augur from '../components/roles/augur/augur';
@@ -37,6 +38,7 @@ const App: React.FC = () => {
     const searchParams = useSearchParams();
     const seed = searchParams.get('seed');
     const [tutorialOpened, setTutorialOpened] = React.useState(false);
+    const [AwardsOpened, setAwardsOpened] = React.useState(false);
     useEffect(() => {
         if (!seed) {
             const randomSeed = Math.floor(Math.random() * 1000000).toString();
@@ -108,9 +110,18 @@ const App: React.FC = () => {
                                 <Button
                                     style={styled.titleIconStyle}
                                     size="large"
+                                    onClick={() => {
+                                        setAwardsOpened(true);
+                                    }}
                                 >
                                     <BookFilled />
                                 </Button>
+                                <Awards
+                                    open={AwardsOpened}
+                                    setOpen={setAwardsOpened}
+                                    allAwards={[]}
+                                    allAwardsIdx={0}
+                                ></Awards>
                             </Col>
                             <Col span={12} style={styled.colCenterStyle}>
                                 <div style={styled.bigTitleStyle}>

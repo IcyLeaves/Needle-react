@@ -1,13 +1,14 @@
 import * as styled from '@/app/style';
 import FoundProgress from '@/components/public/note';
 import { Col, Divider, Flex, Row } from 'antd';
-import React, { Dispatch, useState } from 'react';
-import Role from '../../models/role';
+import React, { Dispatch, useEffect, useState } from 'react';
+import Role, { DefaultSpotBoxState } from '../../models/role';
 import { SpotBoxState, SpotStatus, SpotVisible } from '../../models/spot';
 import { Deck, Seed } from '../../utils/draw';
 import str2role from '../roles/roles';
 import Board from './board';
 import { Info } from './info';
+import Rank from './rank/rank';
 
 type GameProps = {
     config: GameConfig;
@@ -21,6 +22,7 @@ type GameState = {
     clicks: number;
     status: GameStatus;
     isGameOver: boolean;
+    isWin: boolean;
     onRoundStart: AnyFunction[];
     onFlip: AnyFunction[];
     onThatFlip: AnyFunction[];
@@ -60,8 +62,8 @@ type GameConfig = {
 type GameDispatches = {
     gameState: GameState;
     setGameState: Dispatch<GameState>;
-    infoRoles: Role[];
-    setInfoRoles: Dispatch<Role[]>;
+    infoSpot: SpotBoxState;
+    setinfoSpot: Dispatch<SpotBoxState>;
 };
 const Chance: React.FC<{ chance: number }> = props => {
     const { chance } = props;
@@ -92,7 +94,7 @@ const InitSpotStates = (
                 x: i,
                 y: j,
                 role: deck.draw()!,
-                visible: SpotVisible.HIDDEN, // dev use VISIBLE
+                visible: SpotVisible.VISIBLE, // dev use VISIBLE
                 status: SpotStatus.IDLE,
                 buffs: new Map(),
                 attrs: new Map(),
@@ -115,20 +117,28 @@ const Game: React.FC<GameProps> = ({ config }) => {
         onRevealed: [],
         onThatRevealed: [],
         isGameOver: false,
+        isWin: false,
     });
     const [key, setKey] = useState(0);
+    const [rankOpen, setRankOpen] = useState(false);
+
+    useEffect(() => {
+        if (state.isGameOver) {
+            setRankOpen(true);
+        }
+    }, [state.isGameOver]);
 
     const setState: Dispatch<GameState> = (newState: GameState) => {
         updateState(newState);
         setKey(Math.random());
     };
 
-    const [infoRoles, setInfoRoles] = useState<Role[]>([]);
+    const [infoSpot, setinfoSpot] = useState<SpotBoxState>(DefaultSpotBoxState);
     let gameDispatches: GameDispatches = {
         gameState: state,
         setGameState: setState,
-        infoRoles: infoRoles,
-        setInfoRoles: setInfoRoles,
+        infoSpot: infoSpot,
+        setinfoSpot: setinfoSpot,
     };
     return (
         <>
@@ -160,6 +170,11 @@ const Game: React.FC<GameProps> = ({ config }) => {
                     </Flex>
                 </Col>
             </Row>
+            <Rank
+                isWin={state.isWin}
+                open={rankOpen}
+                setOpen={setRankOpen}
+            ></Rank>
         </>
     );
 };

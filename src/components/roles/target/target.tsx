@@ -1,5 +1,5 @@
-import { GameState } from '../../public/game';
 import Role, { RolesType } from '../../../models/role';
+import { GameState } from '../../public/game';
 
 const Target = (): Role => {
     return {
@@ -11,6 +11,7 @@ const Target = (): Role => {
         onRevealed: (gameState: GameState) => {
             gameState.chances = 999;
             gameState.isGameOver = true;
+            gameState.isWin = true;
             return gameState;
         },
     };
