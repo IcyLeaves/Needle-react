@@ -1,4 +1,8 @@
-import Role, { DefaultLightRole, DefaultSpotBoxState } from '@/models/role';
+import Role, {
+    DefaultLightRole,
+    DefaultSpotBoxState,
+    RolesType,
+} from '@/models/role';
 import { SpotStatus, SpotVisible } from '@/models/spot';
 import { Card, Col, Row } from 'antd';
 import { Buff } from '../buffs/buffs';
@@ -52,43 +56,56 @@ const RoleInfoCard: React.FC<{
     role: Role;
     gameDispatches: GameDispatches;
 }> = ({ role, gameDispatches }) => {
+    let cardText = <div style={{}}>{role.description}</div>;
+    let card = (
+        <Card
+            style={{
+                margin: '10px',
+                backgroundColor: 'black',
+            }}
+        >
+            <Row>
+                <Col
+                    span={6}
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <SpotBox
+                        boxState={{
+                            role: role,
+                            visible: SpotVisible.REVEALED,
+                            status: SpotStatus.LOCKED,
+                            buffs: new Map(),
+                            attrs: new Map(),
+                            x: -1,
+                            y: -1,
+                        }}
+                        gameDispatches={gameDispatches}
+                    />
+                </Col>
+                <Col span={18}>
+                    <RoleLabel role={role} />
+                    {cardText}
+                </Col>
+            </Row>
+        </Card>
+    );
+    if (role.type === RolesType.DARK) {
+        card.props.style.backgroundColor = 'black';
+        cardText.props.style.color = 'white';
+    } else {
+        card.props.style.backgroundColor = 'white';
+        cardText.props.style.color = 'black';
+    }
+
     return (
         <>
             <Row>
                 <Col span={20} offset={2}>
-                    <Card
-                        style={{
-                            margin: '10px',
-                        }}
-                    >
-                        <Row>
-                            <Col
-                                span={6}
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <SpotBox
-                                    boxState={{
-                                        role: role,
-                                        visible: SpotVisible.REVEALED,
-                                        status: SpotStatus.LOCKED,
-                                        buffs: new Map(),
-                                        attrs: new Map(),
-                                        x: -1,
-                                        y: -1,
-                                    }}
-                                    gameDispatches={gameDispatches}
-                                />
-                            </Col>
-                            <Col span={18}>
-                                <RoleLabel role={role} />
-                                <div>{role.description}</div>
-                            </Col>
-                        </Row>
-                    </Card>
+                    {card}
                 </Col>
             </Row>
         </>
@@ -131,7 +148,7 @@ const BuffInfoCard: React.FC<{
                                 />
                             </Col>
                             <Col span={18}>
-                                <div>{buff.name}</div>
+                                <b>{buff.name}</b>
 
                                 <div>{buff.description}</div>
                             </Col>
@@ -162,6 +179,7 @@ const genKeywords = (content: string): string[] => {
     });
     return res;
 };
+
 const KeywordInfoCard: React.FC<{
     keyword: string;
 }> = ({ keyword }) => {
@@ -169,15 +187,9 @@ const KeywordInfoCard: React.FC<{
         <>
             <Row>
                 <Col span={20} offset={2}>
-                    <Card
-                        style={{
-                            margin: '10px',
-                        }}
-                    >
-                        <div>
-                            <b>{keyword}</b>：{Keywords.get(keyword)}
-                        </div>
-                    </Card>
+                    <div>
+                        <b>{keyword}</b>：{Keywords.get(keyword)}
+                    </div>
                 </Col>
             </Row>
         </>

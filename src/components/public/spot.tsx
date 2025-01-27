@@ -196,7 +196,10 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
     };
 
     const handleMouseEnter = (event: any) => {
-        if (isLocked(gameDispatches, state) || !gameDispatches.setinfoSpot) {
+        if (
+            (isLocked(gameDispatches, state) && (state.x < 0 || state.y < 0)) ||
+            !gameDispatches.setinfoSpot
+        ) {
             return;
         }
         if (state.visible === SpotVisible.HIDDEN) {
@@ -207,7 +210,10 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
     };
 
     const handleMouseLeave = (event: any) => {
-        if (isLocked(gameDispatches, state) || !gameDispatches.setinfoSpot) {
+        if (
+            (isLocked(gameDispatches, state) && (state.x < 0 || state.y < 0)) ||
+            !gameDispatches.setinfoSpot
+        ) {
             return;
         }
 

@@ -140,6 +140,7 @@ const Game: React.FC<GameProps> = ({ config }) => {
         infoSpot: infoSpot,
         setinfoSpot: setinfoSpot,
     };
+
     return (
         <>
             {/* hidden */}
@@ -147,11 +148,9 @@ const Game: React.FC<GameProps> = ({ config }) => {
             <div style={styled.gameModeStyle}>{state.chances}</div>
             <Divider />
             <Row
-                style={
-                    state.status === GameStatus.SHOOTING
-                        ? styled.BangCursorStyle
-                        : {}
-                }
+                style={{
+                    height: 600,
+                }}
             >
                 <Col span={6}>
                     <b style={styled.sideTitleStyle}>说明</b>
@@ -159,7 +158,15 @@ const Game: React.FC<GameProps> = ({ config }) => {
                         <Info gameDispatches={gameDispatches} />
                     </div>
                 </Col>
-                <Col span={12} style={styled.midColStyle}>
+                <Col
+                    span={12}
+                    style={{
+                        ...styled.midColStyle,
+                        ...(state.status === GameStatus.SHOOTING
+                            ? styled.BangCursorStyle
+                            : {}),
+                    }}
+                >
                     <Board gameDispatches={gameDispatches} />
                     <Chance chance={state.chances} />
                 </Col>
