@@ -4,27 +4,13 @@ import React, { Dispatch } from 'react';
 type AwardsProps = {
     open: boolean;
     setOpen: Dispatch<boolean>;
-    allAwards: Award[];
-    allAwardsIdx: number;
 };
 
-type Award = {
-    note: string;
-    color: string;
-    name: string;
-    id: string;
-    title: string;
-};
-const Awards: React.FC<AwardsProps> = ({
-    allAwards,
-    allAwardsIdx,
-    open,
-    setOpen,
-}) => {
+const Awards: React.FC<AwardsProps> = ({ open, setOpen }) => {
     // const handleOverlayClick = () => {
     //   // todo: implement overlay click logic
     // };
-
+    const allAwards: any[] = [];
     const handleAwardsCarouselChange = () => {
         // todo: implement carousel change logic
     };

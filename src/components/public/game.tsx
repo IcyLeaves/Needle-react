@@ -8,7 +8,8 @@ import { Deck, Seed } from '../../utils/draw';
 import str2role from '../roles/roles';
 import Board from './board';
 import { Info } from './info';
-import Rank from './rank/rank';
+import Rank from './rank';
+import { Statistic } from './statistic/statistic';
 
 type GameProps = {
     config: GameConfig;
@@ -28,6 +29,8 @@ type GameState = {
     onThatFlip: AnyFunction[];
     onRevealed: AnyFunction[];
     onThatRevealed: AnyFunction[];
+    //评价系统
+    statistic: Statistic;
 };
 
 export enum GameStatus {

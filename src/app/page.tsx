@@ -119,8 +119,6 @@ const App: React.FC = () => {
                                 <Awards
                                     open={AwardsOpened}
                                     setOpen={setAwardsOpened}
-                                    allAwards={[]}
-                                    allAwardsIdx={0}
                                 ></Awards>
                             </Col>
                             <Col span={12} style={styled.colCenterStyle}>

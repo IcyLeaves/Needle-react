@@ -1,7 +1,5 @@
-import { Divider, Modal } from 'antd';
-import { Dispatch, useState } from 'react';
-import RankItems from './rank-items';
-import RankMetrics from './rank-metrics';
+import { Col, Divider, Modal, Row, Tag, Tooltip } from 'antd';
+import { Dispatch } from 'react';
 type RankProps = {
     isWin: boolean;
     open: boolean;
@@ -58,5 +56,41 @@ const Rank: React.FC<RankProps> = ({ isWin, open, setOpen }) => {
         </Modal>
     );
 };
+const RankItems: React.FC<{ items: any[] }> = ({ items }) => {
+    return (
+        <Row justify="center" style={{ width: '100%', flexWrap: 'wrap' }}>
+            {items.map((item, i) => (
+                <div
+                    key={item.id}
+                    // className="award-item"
+                >
+                    <Tooltip title={item.note}>
+                        <Tag
+                            // className={setCurrAwardClass(item)}
+                            color={item.color}
+                            style={{ border: 'none' }}
+                        >
+                            {item.title}
+                        </Tag>
+                    </Tooltip>
+                </div>
+            ))}
+        </Row>
+    );
+};
 
+const RankMetrics: React.FC<{ metrics: string[] }> = ({ metrics }) => {
+    return (
+        <Row justify="center" style={{ width: '100%' }}>
+            {metrics.map((val, i) => (
+                <Col span={6} key={i} className="col-center flex-col">
+                    <div className="modal-item-value">{val}</div>
+                    <div className="modal-item-name">{metricsMap[i]}</div>
+                </Col>
+            ))}
+        </Row>
+    );
+};
+
+export { RankItems, RankMetrics };
 export default Rank;
