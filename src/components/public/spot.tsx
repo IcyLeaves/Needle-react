@@ -25,7 +25,7 @@ import Killer from '../roles/killer/killer';
 import Sheriff from '../roles/sheriff/sheriff';
 import Volunteer from '../roles/volunteer/volunteer';
 import Witch from '../roles/witch/witch';
-import { GameDispatches, GameStatus, SearchAllSpots } from './game';
+import { GameDispatches, GameStatus, SearchAllSpots, onGameOver } from './game';
 
 const isLocked = (gameDispatches: GameDispatches, state: SpotBoxState) => {
     return (
@@ -192,6 +192,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
             gameState.isGameOver = true;
             gameState.isWin = false;
         }
+        onGameOver(gameState);
         setGameState(gameState);
     };
 

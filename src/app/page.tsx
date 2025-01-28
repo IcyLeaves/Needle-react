@@ -37,8 +37,6 @@ const App: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const seed = searchParams.get('seed');
-    const [tutorialOpened, setTutorialOpened] = React.useState(false);
-    const [AwardsOpened, setAwardsOpened] = React.useState(false);
     useEffect(() => {
         if (!seed) {
             const randomSeed = Math.floor(Math.random() * 1000000).toString();
@@ -90,51 +88,7 @@ const App: React.FC = () => {
             }}
         >
             <Layout style={styled.layoutStyle}>
-                <Header style={styled.headerStyle}>
-                    <Flex gap="middle" align="center" justify="center" vertical>
-                        <Row style={styled.rowStyle}>
-                            <Col span={3} offset={3}>
-                                <Button
-                                    style={styled.titleIconStyle}
-                                    size="large"
-                                    onClick={() => {
-                                        setTutorialOpened(true);
-                                    }}
-                                >
-                                    <QuestionCircleFilled />
-                                </Button>
-                                <Tutorial
-                                    open={tutorialOpened}
-                                    setOpen={setTutorialOpened}
-                                ></Tutorial>
-                                <Button
-                                    style={styled.titleIconStyle}
-                                    size="large"
-                                    onClick={() => {
-                                        setAwardsOpened(true);
-                                    }}
-                                >
-                                    <BookFilled />
-                                </Button>
-                                <Awards
-                                    open={AwardsOpened}
-                                    setOpen={setAwardsOpened}
-                                ></Awards>
-                            </Col>
-                            <Col span={12} style={styled.colCenterStyle}>
-                                <div style={styled.bigTitleStyle}>
-                                    Needle v3.0
-                                </div>
-                            </Col>
-                            <Col span={3}></Col>
-                        </Row>
-                    </Flex>
-                </Header>
-
-                <Content style={styled.contentStyle}>
-                    <Divider />
-                    <Game config={boardConfig} />
-                </Content>
+                <Game config={boardConfig} />
             </Layout>
         </ConfigProvider>
     );

@@ -1,18 +1,15 @@
 import { Col, Divider, Modal, Row, Tag, Tooltip } from 'antd';
 import { Dispatch } from 'react';
+import { GameState } from './game';
+import { Statistic } from './statistic/statistic';
 type RankProps = {
     isWin: boolean;
     open: boolean;
     setOpen: Dispatch<boolean>;
+    gameState: GameState;
 };
 
-const Rank: React.FC<RankProps> = ({ isWin, open, setOpen }) => {
-    // type Item = {
-    //     title: string;
-    //     color: string;
-    //     note: string;
-    //     id: string;
-    // };
+const Rank: React.FC<RankProps> = ({ isWin, open, setOpen, gameState }) => {
     return (
         <Modal
             title="评价"
@@ -26,17 +23,8 @@ const Rank: React.FC<RankProps> = ({ isWin, open, setOpen }) => {
             <div className={`modal-title ${isWin ? 'win' : 'lose'}`}>
                 {isWin ? '久别重逢' : '失之交臂'}
             </div>
-            <RankMetrics metrics={['0', '0', '0']}></RankMetrics>
-            <RankItems
-                items={[
-                    {
-                        title: '🔍',
-                        color: 'red',
-                        note: '你的🔍',
-                        id: 'dee',
-                    },
-                ]}
-            />
+            <RankMetrics statistic={gameState.statistic}></RankMetrics>
+            <RankItems statistic={gameState.statistic} />
             <Divider />
             {/* <Row type="flex" justify="center" style={{ width: '100%' }}>
                     <Col span={24} className="col-center flex-col">
@@ -56,38 +44,48 @@ const Rank: React.FC<RankProps> = ({ isWin, open, setOpen }) => {
         </Modal>
     );
 };
-const RankItems: React.FC<{ items: any[] }> = ({ items }) => {
+const RankItems: React.FC<{ statistic: Statistic }> = ({ statistic }) => {
+    let achReact: JSX.Element[] = [];
+    statistic.currentAchievements.forEach((val, key) => {
+        achReact.push(
+            <div
+                key={val.id}
+                // className="award-item"
+            >
+                <Tooltip title={val.note}>
+                    <Tag
+                        // className={setCurrAwardClass(item)}
+                        color={val.color}
+                        style={{ border: 'none' }}
+                    >
+                        {val.name}
+                    </Tag>
+                </Tooltip>
+            </div>,
+        );
+    });
     return (
         <Row justify="center" style={{ width: '100%', flexWrap: 'wrap' }}>
-            {items.map((item, i) => (
-                <div
-                    key={item.id}
-                    // className="award-item"
-                >
-                    <Tooltip title={item.note}>
-                        <Tag
-                            // className={setCurrAwardClass(item)}
-                            color={item.color}
-                            style={{ border: 'none' }}
-                        >
-                            {item.title}
-                        </Tag>
-                    </Tooltip>
-                </div>
-            ))}
+            {achReact}
         </Row>
     );
 };
 
-const RankMetrics: React.FC<{ metrics: string[] }> = ({ metrics }) => {
+const RankMetrics: React.FC<{ statistic: Statistic }> = ({ statistic }) => {
+    let rankReact: JSX.Element[] = [];
+    statistic.currentRanks.forEach((val, key) => {
+        rankReact.push(
+            <Col span={6} key={key}>
+                <div className="rank-item">
+                    <div className="rank-item-title">{val.title}</div>
+                    <div className="rank-item-value">{val.value}</div>
+                </div>
+            </Col>,
+        );
+    });
     return (
         <Row justify="center" style={{ width: '100%' }}>
-            {metrics.map((val, i) => (
-                <Col span={6} key={i} className="col-center flex-col">
-                    <div className="modal-item-value">{val}</div>
-                    <div className="modal-item-name">{metricsMap[i]}</div>
-                </Col>
-            ))}
+            {rankReact}
         </Row>
     );
 };

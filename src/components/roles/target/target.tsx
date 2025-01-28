@@ -9,7 +9,6 @@ const Target = (): Role => {
         color: '#66bb6a',
         type: RolesType.LIGHT,
         onRevealed: (gameState: GameState) => {
-            gameState.chances = 999;
             gameState.isGameOver = true;
             gameState.isWin = true;
             return gameState;

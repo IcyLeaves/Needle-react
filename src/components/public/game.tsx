@@ -1,15 +1,25 @@
 import * as styled from '@/app/style';
 import FoundProgress from '@/components/public/note';
-import { Col, Divider, Flex, Row } from 'antd';
+import { BookFilled, QuestionCircleFilled } from '@ant-design/icons';
+import { Button, Col, Divider, Flex, Row } from 'antd';
+import { Content, Header } from 'antd/es/layout/layout';
 import React, { Dispatch, useEffect, useState } from 'react';
 import Role, { DefaultSpotBoxState } from '../../models/role';
 import { SpotBoxState, SpotStatus, SpotVisible } from '../../models/spot';
 import { Deck, Seed } from '../../utils/draw';
 import str2role from '../roles/roles';
+import Awards from './award';
 import Board from './board';
 import { Info } from './info';
 import Rank from './rank';
-import { Statistic } from './statistic/statistic';
+import {
+    Statistic,
+    initStatistic,
+    loadMetricsFromGameState,
+    updateCurrentAndHistoryAchivement,
+    updateCurrentRanks,
+} from './statistic/statistic';
+import { Tutorial } from './tutorial';
 
 type GameProps = {
     config: GameConfig;
@@ -121,9 +131,13 @@ const Game: React.FC<GameProps> = ({ config }) => {
         onThatRevealed: [],
         isGameOver: false,
         isWin: false,
+        statistic: initStatistic(),
     });
     const [key, setKey] = useState(0);
     const [rankOpen, setRankOpen] = useState(false);
+
+    const [tutorialOpened, setTutorialOpened] = React.useState(false);
+    const [AwardsOpened, setAwardsOpened] = React.useState(false);
 
     useEffect(() => {
         if (state.isGameOver) {
@@ -146,48 +160,101 @@ const Game: React.FC<GameProps> = ({ config }) => {
 
     return (
         <>
-            {/* hidden */}
-            <div style={{ display: 'none' }} key={key}></div>
-            <div style={styled.gameModeStyle}>{state.chances}</div>
-            <Divider />
-            <Row
-                style={{
-                    height: 600,
-                }}
-            >
-                <Col span={6}>
-                    <b style={styled.sideTitleStyle}>说明</b>
-                    <div id="description-board" style={styled.sideColStyle}>
-                        <Info gameDispatches={gameDispatches} />
-                    </div>
-                </Col>
-                <Col
-                    span={12}
+            <Header style={styled.headerStyle}>
+                <Flex gap="middle" align="center" justify="center" vertical>
+                    <Row style={styled.rowStyle}>
+                        <Col span={3} offset={3}>
+                            <Button
+                                style={styled.titleIconStyle}
+                                size="large"
+                                onClick={() => {
+                                    setTutorialOpened(true);
+                                }}
+                            >
+                                <QuestionCircleFilled />
+                            </Button>
+                            <Tutorial
+                                open={tutorialOpened}
+                                setOpen={setTutorialOpened}
+                            ></Tutorial>
+                            <Button
+                                style={styled.titleIconStyle}
+                                size="large"
+                                onClick={() => {
+                                    setAwardsOpened(true);
+                                }}
+                            >
+                                <BookFilled />
+                            </Button>
+                            <Awards
+                                open={AwardsOpened}
+                                setOpen={setAwardsOpened}
+                                gameState={state}
+                            ></Awards>
+                        </Col>
+                        <Col span={12} style={styled.colCenterStyle}>
+                            <div style={styled.bigTitleStyle}>Needle v3.0</div>
+                        </Col>
+                        <Col span={3}></Col>
+                    </Row>
+                </Flex>
+            </Header>
+
+            <Content style={styled.contentStyle}>
+                <Divider />
+                {/* hidden */}
+                <div style={{ display: 'none' }} key={key}></div>
+                <div style={styled.gameModeStyle}>{state.chances}</div>
+                <Divider />
+                <Row
                     style={{
-                        ...styled.midColStyle,
-                        ...(state.status === GameStatus.SHOOTING
-                            ? styled.BangCursorStyle
-                            : {}),
+                        height: 1000,
                     }}
                 >
-                    <Board gameDispatches={gameDispatches} />
-                    <Chance chance={state.chances} />
-                </Col>
-                <Col span={6}>
-                    <b style={styled.sideTitleStyle}>笔记</b>
-                    <Flex gap="small" vertical>
-                        <FoundProgress gameDispatches={gameDispatches} />
-                    </Flex>
-                </Col>
-            </Row>
-            <Rank
-                isWin={state.isWin}
-                open={rankOpen}
-                setOpen={setRankOpen}
-            ></Rank>
+                    <Col span={6}>
+                        <b style={styled.sideTitleStyle}>说明</b>
+                        <div id="description-board" style={styled.sideColStyle}>
+                            <Info gameDispatches={gameDispatches} />
+                        </div>
+                    </Col>
+                    <Col
+                        span={12}
+                        style={{
+                            ...styled.midtopColStyle,
+                            ...(state.status === GameStatus.SHOOTING
+                                ? styled.BangCursorStyle
+                                : {}),
+                        }}
+                    >
+                        <Board gameDispatches={gameDispatches} />
+                        <Chance chance={state.chances} />
+                    </Col>
+                    <Col span={6}>
+                        <b style={styled.sideTitleStyle}>笔记</b>
+                        <Flex gap="small" vertical>
+                            <FoundProgress gameDispatches={gameDispatches} />
+                        </Flex>
+                    </Col>
+                </Row>
+                <Rank
+                    isWin={state.isWin}
+                    open={rankOpen}
+                    setOpen={setRankOpen}
+                    gameState={state}
+                ></Rank>
+            </Content>
         </>
     );
 };
 
-export { Game, SearchAllSpots };
+const onGameOver = (gameState: GameState): GameState => {
+    gameState.statistic = loadMetricsFromGameState(gameState);
+    gameState.statistic = updateCurrentAndHistoryAchivement(
+        gameState.statistic,
+    );
+    gameState.statistic = updateCurrentRanks(gameState.statistic);
+    return gameState;
+};
+
+export { Game, SearchAllSpots, onGameOver };
 export type { GameConfig, GameDispatches, GameState };
