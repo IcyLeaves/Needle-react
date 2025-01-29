@@ -10,7 +10,6 @@ import { Button, Col, Divider, Dropdown, Flex, MenuProps, Row } from 'antd';
 import { Content, Header } from 'antd/es/layout/layout';
 import { useRouter } from 'next/navigation';
 import React, { Dispatch, useEffect, useState } from 'react';
-import { GameMode } from '../../app/page';
 import Role, { DefaultSpotBoxState } from '../../models/role';
 import { SpotBoxState, SpotStatus, SpotVisible } from '../../models/spot';
 import { Deck, Seed } from '../../utils/draw';
@@ -27,7 +26,10 @@ import {
     updateCurrentRanks,
 } from './statistic/statistic';
 import { Tutorial } from './tutorial';
-
+enum GameMode {
+    QUICKPLAY = 'quickplay',
+    STANDARD = 'standard',
+}
 type GameProps = {
     config: GameConfig;
 };
@@ -312,5 +314,5 @@ const onRoundOver = (gameState: GameState): GameState => {
     if (gameState.chances === 1) gameState.statistic.mChancesOnlyOneFrequent++;
     return gameState;
 };
-export { Game, SearchAllSpots, onGameOver, onRoundOver };
+export { Game, GameMode, SearchAllSpots, onGameOver, onRoundOver };
 export type { GameConfig, GameDispatches, GameState };

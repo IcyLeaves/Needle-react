@@ -11,7 +11,7 @@ import {
     useSearchParams,
 } from 'next/navigation';
 import React, { Suspense, useEffect } from 'react';
-import { Game, GameConfig } from '../components/public/game';
+import { Game, GameConfig, GameMode } from '../components/public/game';
 import Augur from '../components/roles/augur/augur';
 import BangBang from '../components/roles/bangbang/bangbang';
 import Copies from '../components/roles/copies/copies';
@@ -26,10 +26,7 @@ import Witch from '../components/roles/witch/witch';
 import * as styled from './style';
 const { Header, Footer, Sider, Content } = Layout;
 const alignOptions = ['flex-start', 'center', 'flex-end'];
-enum GameMode {
-    QUICKPLAY = 'quickplay',
-    STANDARD = 'standard',
-}
+
 const App: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -125,8 +122,6 @@ export default function AppWrapper() {
         </Suspense>
     );
 }
-
-export { GameMode };
 
 function generateTimeBasedString() {
     const currentTime = new Date();
