@@ -50,7 +50,6 @@ const Ganster = (): Role => {
                 next = deck.draw();
             }
             if (next) {
-                // console.log('next', gameState.clicks, next.x, next.y);
                 gameState.spots[next.x][next.y].attrs?.set(
                     'next',
                     gameState.clicks,

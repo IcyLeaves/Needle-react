@@ -3,22 +3,10 @@
 import Citizen from '@/components/roles/citizen/citizen';
 import Detective from '@/components/roles/detective/detective';
 import Target from '@/components/roles/target/target';
-import { BookFilled, QuestionCircleFilled } from '@ant-design/icons';
-import {
-    Button,
-    Col,
-    ConfigProvider,
-    Divider,
-    Flex,
-    Layout,
-    Row,
-    Spin,
-} from 'antd';
+import { ConfigProvider, Layout, Spin } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect } from 'react';
-import Awards from '../components/public/award';
 import { Game, GameConfig } from '../components/public/game';
-import { Tutorial } from '../components/public/tutorial';
 import Augur from '../components/roles/augur/augur';
 import BangBang from '../components/roles/bangbang/bangbang';
 import Copies from '../components/roles/copies/copies';
@@ -30,7 +18,9 @@ import Reporter from '../components/roles/reporter/reporter';
 import Sheriff from '../components/roles/sheriff/sheriff';
 import Volunteer from '../components/roles/volunteer/volunteer';
 import Witch from '../components/roles/witch/witch';
+import { setStorage } from '../utils/cookie';
 import * as styled from './style';
+import '@/components/css/raw.css';
 const { Header, Footer, Sider, Content } = Layout;
 const alignOptions = ['flex-start', 'center', 'flex-end'];
 const App: React.FC = () => {
@@ -68,6 +58,7 @@ const App: React.FC = () => {
         },
         seed: seed!.toString(),
     };
+    setStorage('statistic', null); // dev
 
     return (
         <ConfigProvider

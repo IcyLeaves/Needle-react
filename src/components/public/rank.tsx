@@ -1,5 +1,7 @@
-import { Col, Divider, Modal, Row, Tag, Tooltip } from 'antd';
+import { Col, Divider, Modal, Row } from 'antd';
 import { Dispatch } from 'react';
+import { ModalContentStyle, ModalTitleStyle } from '../../app/style';
+import { AchivementTag } from './award';
 import { GameState } from './game';
 import { Statistic } from './statistic/statistic';
 type RankProps = {
@@ -20,13 +22,23 @@ const Rank: React.FC<RankProps> = ({ isWin, open, setOpen, gameState }) => {
             width={1000}
             footer={null}
         >
-            <div className={`modal-title ${isWin ? 'win' : 'lose'}`}>
-                {isWin ? '久别重逢' : '失之交臂'}
-            </div>
-            <RankMetrics statistic={gameState.statistic}></RankMetrics>
-            <RankItems statistic={gameState.statistic} />
-            <Divider />
-            {/* <Row type="flex" justify="center" style={{ width: '100%' }}>
+            <div style={{ ...ModalContentStyle }}>
+                <div
+                    style={{
+                        ...ModalTitleStyle,
+                        ...{
+                            color: isWin ? 'green' : 'red',
+                        },
+                    }}
+                >
+                    {isWin ? '久别重逢' : '失之交臂'}
+                </div>
+
+                <RankMetrics statistic={gameState.statistic}></RankMetrics>
+                <Divider style={{ marginTop: 20, marginBottom: 20 }} />
+
+                <RankItems statistic={gameState.statistic} />
+                {/* <Row type="flex" justify="center" style={{ width: '100%' }}>
                     <Col span={24} className="col-center flex-col">
                         <Button
                             v-show={gifStatus <= -1}
@@ -41,28 +53,15 @@ const Rank: React.FC<RankProps> = ({ isWin, open, setOpen, gameState }) => {
                         </div>
                     </Col>
                 </Row> */}
+            </div>
         </Modal>
     );
 };
 const RankItems: React.FC<{ statistic: Statistic }> = ({ statistic }) => {
     let achReact: JSX.Element[] = [];
     statistic.currentAchievements.forEach((val, key) => {
-        achReact.push(
-            <div
-                key={val.id}
-                // className="award-item"
-            >
-                <Tooltip title={val.note}>
-                    <Tag
-                        // className={setCurrAwardClass(item)}
-                        color={val.color}
-                        style={{ border: 'none' }}
-                    >
-                        {val.name}
-                    </Tag>
-                </Tooltip>
-            </div>,
-        );
+        if (val.completed === false) return;
+        achReact.push(<AchivementTag key={key} value={val} legendClass="" />);
     });
     return (
         <Row justify="center" style={{ width: '100%', flexWrap: 'wrap' }}>
@@ -75,10 +74,18 @@ const RankMetrics: React.FC<{ statistic: Statistic }> = ({ statistic }) => {
     let rankReact: JSX.Element[] = [];
     statistic.currentRanks.forEach((val, key) => {
         rankReact.push(
-            <Col span={6} key={key}>
+            <Col
+                span={6}
+                key={key}
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
                 <div className="rank-item">
-                    <div className="rank-item-title">{val.title}</div>
-                    <div className="rank-item-value">{val.value}</div>
+                    <div style={{ fontSize: 20 }}>{val.value}</div>
+                    <div style={{ color: 'gray' }}>{val.title}</div>
                 </div>
             </Col>,
         );

@@ -1,8 +1,18 @@
-import { Carousel, Modal, Row, Tag, Tooltip } from 'antd';
+import { Carousel, Col, Modal, Row, Tag, Tooltip } from 'antd';
 import React, { Dispatch } from 'react';
+import {
+    ModalAwardStyle,
+    ModalContentStyle,
+    ModalTagStyle,
+    ModalTagUncompletedStyle,
+} from '../../app/style';
+import '../css/raw.css';
 import { GameState } from './game';
-import { groupbyHistoryAchivementBySeries } from './statistic/statistic';
-
+import {
+    Achivement,
+    Rarity,
+    groupbyHistoryAchivementBySeries,
+} from './statistic/statistic';
 type AwardsProps = {
     open: boolean;
     setOpen: Dispatch<boolean>;
@@ -16,27 +26,31 @@ const Awards: React.FC<AwardsProps> = ({ open, setOpen, gameState }) => {
     groupbyHistoryAchivementBySeries(gameState.statistic).forEach((val, i) => {
         let awardItemsReact: JSX.Element[] = [];
         val.forEach((value, key) => {
+            let legendClass = '';
+            if (value.color === Rarity.LEGEND) {
+                legendClass = 'modal-tag-legend';
+            }
             awardItemsReact.push(
-                <div key={value.id} className="award-item">
-                    <Tooltip title={value.note} placement="top">
-                        <Tag
-                            // className={setAwardClass(val)}
-                            color={value.color}
-                            style={{ border: 'none' }}
-                        >
-                            {value.name}
-                        </Tag>
-                    </Tooltip>
-                </div>,
+                <AchivementTag
+                    key={value.id}
+                    value={value}
+                    legendClass={legendClass}
+                />,
             );
         });
         awardReact.push(
             <Row
                 key={i}
                 justify="center"
-                style={{ width: '100%', flexWrap: 'wrap' }}
+                style={{
+                    width: '100%',
+                    flexWrap: 'wrap',
+                }}
+                className="award-row"
             >
-                {awardItemsReact}
+                <Col span={22} offset={1}>
+                    {awardItemsReact}
+                </Col>
             </Row>,
         );
 
@@ -56,15 +70,22 @@ const Awards: React.FC<AwardsProps> = ({ open, setOpen, gameState }) => {
             width={1000}
             footer={null}
         >
-            <div className="modal-content">
-                <div className="modal-award">
-                    <div style={{ textAlign: 'center' }}>
+            <div style={{ ...ModalContentStyle }}>
+                <div style={{ ...ModalAwardStyle }}>
+                    <div
+                        style={{
+                            textAlign: 'center',
+                            padding: '10px 0',
+                            fontSize: '20px',
+                        }}
+                    >
                         {titles[carouselIdx]}类
                     </div>
                     <Carousel
                         autoplay={false}
                         arrows={true}
                         afterChange={handleAwardsCarouselChange}
+                        style={{ padding: '20px' }}
                     >
                         {awardReact}
                     </Carousel>
@@ -74,4 +95,25 @@ const Awards: React.FC<AwardsProps> = ({ open, setOpen, gameState }) => {
     );
 };
 
+const AchivementTag: React.FC<{ value: Achivement; legendClass: string }> = ({
+    value,
+    legendClass,
+}) => {
+    return (
+        <Tooltip title={value.note} placement="top">
+            <Tag
+                // className={setAwardClass(val)}
+                color={value.color}
+                style={{
+                    ...ModalTagStyle,
+                    ...(!value.completed ? ModalTagUncompletedStyle : {}),
+                }}
+                className={legendClass}
+            >
+                {value.name}
+            </Tag>
+        </Tooltip>
+    );
+};
 export default Awards;
+export { AchivementTag };

@@ -2,6 +2,9 @@
 // 1. 成就系统。当局成就 / 历史成就。
 
 import { SpotBoxState, SpotVisible } from '../../../models/spot';
+import { getStorage, setStorage } from '../../../utils/cookie';
+import { nearEight, nearFour } from '../../../utils/graph';
+import Target from '../../roles/target/target';
 import { GameState } from '../game';
 
 // 2. 评价系统。每局结束后进行指标评价。当局指标
@@ -56,8 +59,25 @@ type Rank = {
 };
 
 function initStatistic(): Statistic {
+    let storage = getStorage<Statistic>('statistic');
+    if (!storage || !storage.historyAchievements) {
+        let initial = {
+            historyAchievements: new Map(),
+            currentAchievements: new Map(),
+            currentRanks: new Map(),
+            mIsGameWin: false,
+            mCompleteRatio: '0%',
+            mRemainChances: 0,
+            mClickTurns: 0,
+            mChancesOnlyOneFrequent: 0,
+            mBoardAtTheEnd: [],
+            mIsTargetKilled: false,
+            mIsAddChancesByWitch: false,
+        };
+        storage = updateCurrentAndHistoryAchivement(initial, true);
+    }
     return {
-        historyAchievements: new Map(),
+        historyAchievements: storage.historyAchievements,
         currentAchievements: new Map(),
         currentRanks: new Map(),
         mIsGameWin: false,
@@ -72,8 +92,76 @@ function initStatistic(): Statistic {
 }
 // check whether achivement is acquired
 // store achivement to current and history
-function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
+function updateCurrentAndHistoryAchivement(
+    statistic: Statistic,
+    ...init: boolean[]
+): Statistic {
     let ach: Map<string, Achivement> = new Map();
+    let p2n = (s: string): number => {
+        // percent to number
+        return parseInt(s.substring(0, s.length - 1));
+    };
+
+    let nXr = (id: string): boolean => {
+        if (
+            statistic.mIsGameWin == false &&
+            p2n(statistic.mCompleteRatio) < 90
+        ) {
+            var cnt = 0;
+            for (var i = 0; i < statistic.mBoardAtTheEnd.length; i++) {
+                for (var j = 0; j < statistic.mBoardAtTheEnd[0].length; j++) {
+                    if (statistic.mBoardAtTheEnd[i][j].role.id == Target().id) {
+                        for (var near of nearEight(
+                            statistic.mBoardAtTheEnd,
+                            i,
+                            j,
+                        )) {
+                            if (near && near.visible == SpotVisible.REVEALED)
+                                cnt++;
+                        }
+                        if (cnt == 8 && id === '3-3') return true;
+                        if (cnt == 8 && id === '3-4') return true;
+                        else {
+                            cnt = 0;
+                            for (var near2 of nearFour(
+                                i,
+                                j,
+                                statistic.mBoardAtTheEnd.length,
+                                statistic.mBoardAtTheEnd[0].length,
+                            )) {
+                                if (!near2) continue;
+                                let n =
+                                    statistic.mBoardAtTheEnd[near2.x][near2.y];
+
+                                if (n && n.visible == SpotVisible.REVEALED)
+                                    cnt++;
+                            }
+                            if (
+                                cnt === 1 &&
+                                p2n(statistic.mCompleteRatio) < 90 &&
+                                id === '3-0'
+                            )
+                                return true;
+                            if (
+                                cnt === 2 &&
+                                p2n(statistic.mCompleteRatio) < 90 &&
+                                id === '3-1'
+                            )
+                                return true;
+                            if (
+                                cnt === 3 &&
+                                p2n(statistic.mCompleteRatio) < 90 &&
+                                id === '3-2'
+                            )
+                                return true;
+                        }
+                    }
+                }
+            }
+        }
+        if (statistic.mIsTargetKilled == true && id === '3-5') return true;
+        return false;
+    };
 
     // 0-0
     {
@@ -84,7 +172,7 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索为0的情况下获胜',
             series: '剩余线索',
             unlocked: true,
-            completed: true,
+            completed: statistic.mIsGameWin && statistic.mRemainChances === 0,
         });
     }
     // 0-1
@@ -96,7 +184,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索为1-5个的情况下获胜',
             series: '剩余线索',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                statistic.mRemainChances <= 5 &&
+                statistic.mRemainChances > 0,
         });
     }
     // 0-2
@@ -108,7 +199,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索为6-10个的情况下获胜',
             series: '剩余线索',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                statistic.mRemainChances <= 10 &&
+                statistic.mRemainChances > 5,
         });
     }
     // 0-3
@@ -120,7 +214,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索为11-20个的情况下获胜',
             series: '剩余线索',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                statistic.mRemainChances <= 20 &&
+                statistic.mRemainChances > 10,
         });
     }
     // 0-4
@@ -132,7 +229,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索为40-99个的情况下获胜',
             series: '剩余线索',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                statistic.mRemainChances <= 99 &&
+                statistic.mRemainChances > 20,
         });
     }
     // 0-5
@@ -144,7 +244,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索为100-199个的情况下获胜',
             series: '剩余线索',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                statistic.mRemainChances > 99 &&
+                statistic.mRemainChances <= 199,
         });
     }
     // 0-6
@@ -156,7 +259,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索为20-99个的情况下失败',
             series: '剩余线索',
             unlocked: true,
-            completed: true,
+            completed:
+                !statistic.mIsGameWin &&
+                statistic.mRemainChances > 19 &&
+                statistic.mRemainChances <= 99,
         });
     }
     // 0-7
@@ -168,7 +274,7 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索至少100个的情况下失败',
             series: '剩余线索',
             unlocked: true,
-            completed: true,
+            completed: !statistic.mIsGameWin && statistic.mRemainChances > 99,
         });
     }
     // 0-8
@@ -180,7 +286,7 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索至少200个的情况下获胜',
             series: '剩余线索',
             unlocked: true,
-            completed: true,
+            completed: statistic.mIsGameWin && statistic.mRemainChances >= 200,
         });
     }
 
@@ -193,7 +299,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为1%-10%的情况下获胜',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                p2n(statistic.mCompleteRatio) <= 10 &&
+                p2n(statistic.mCompleteRatio) > 0,
         });
     }
     // 1-1
@@ -205,7 +314,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为11%-20%的情况下获胜',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                p2n(statistic.mCompleteRatio) <= 20 &&
+                p2n(statistic.mCompleteRatio) > 10,
         });
     }
     // 1-2
@@ -217,7 +329,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为21%-30%的情况下获胜',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                p2n(statistic.mCompleteRatio) <= 30 &&
+                p2n(statistic.mCompleteRatio) > 20,
         });
     }
     // 1-3
@@ -229,7 +344,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为31%-40%的情况下获胜',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                p2n(statistic.mCompleteRatio) <= 40 &&
+                p2n(statistic.mCompleteRatio) > 30,
         });
     }
     // 1-4
@@ -241,7 +359,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为41%-50%的情况下获胜',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                p2n(statistic.mCompleteRatio) <= 50 &&
+                p2n(statistic.mCompleteRatio) > 40,
         });
     }
     // 1-5
@@ -253,7 +374,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为1%-10%的情况下失败',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                !statistic.mIsGameWin &&
+                p2n(statistic.mCompleteRatio) <= 10 &&
+                p2n(statistic.mCompleteRatio) > 0,
         });
     }
     // 1-6
@@ -265,7 +389,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为11%-20%的情况下失败',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                !statistic.mIsGameWin &&
+                p2n(statistic.mCompleteRatio) <= 20 &&
+                p2n(statistic.mCompleteRatio) > 10,
         });
     }
     // 1-7
@@ -277,7 +404,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为80%-89%的情况下失败',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                !statistic.mIsGameWin &&
+                p2n(statistic.mCompleteRatio) <= 90 &&
+                p2n(statistic.mCompleteRatio) > 80,
         });
     }
     // 1-8
@@ -289,7 +419,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为90%-99%的情况下失败',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                !statistic.mIsGameWin &&
+                p2n(statistic.mCompleteRatio) >= 90 &&
+                p2n(statistic.mCompleteRatio) < 100,
         });
     }
     // 1-9
@@ -301,7 +434,8 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为100%的情况下成功',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin && p2n(statistic.mCompleteRatio) == 100,
         });
     }
     // 1-10
@@ -313,7 +447,8 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为100%的情况下失败',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                !statistic.mIsGameWin && p2n(statistic.mCompleteRatio) == 100,
         });
     }
     // 1-11
@@ -325,7 +460,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为80%-89%的情况下成功',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                p2n(statistic.mCompleteRatio) >= 80 &&
+                p2n(statistic.mCompleteRatio) < 90,
         });
     }
     // 1-12
@@ -337,7 +475,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为90%-99%的情况下成功',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                p2n(statistic.mCompleteRatio) >= 90 &&
+                p2n(statistic.mCompleteRatio) < 100,
         });
     }
     // 1-13
@@ -349,7 +490,8 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '完成度为0%的情况下失败',
             series: '完成度',
             unlocked: true,
-            completed: true,
+            completed:
+                !statistic.mIsGameWin && p2n(statistic.mCompleteRatio) == 0,
         });
     }
     // 2-0
@@ -361,7 +503,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索为1的情况出现3-6次，最后获胜',
             series: '技巧',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                statistic.mChancesOnlyOneFrequent >= 3 &&
+                statistic.mChancesOnlyOneFrequent <= 6,
         });
     }
     // 2-1
@@ -373,7 +518,10 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索为1的情况出现7-9次，最后获胜',
             series: '技巧',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin &&
+                statistic.mChancesOnlyOneFrequent >= 7 &&
+                statistic.mChancesOnlyOneFrequent <= 9,
         });
     }
     // 2-2
@@ -385,7 +533,8 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '剩余线索为1的情况至少出现10次，最后获胜',
             series: '技巧',
             unlocked: true,
-            completed: true,
+            completed:
+                statistic.mIsGameWin && statistic.mChancesOnlyOneFrequent >= 10,
         });
     }
     // 2-3
@@ -397,7 +546,7 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '【女巫】的效果拯救了你',
             series: '技巧',
             unlocked: true,
-            completed: true,
+            completed: statistic.mIsAddChancesByWitch,
         });
     }
     // 3-0
@@ -409,7 +558,7 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '失败且完成度<90%时，与目标相邻的角色有1个已经现身',
             series: '意外',
             unlocked: true,
-            completed: true,
+            completed: nXr('3-0'),
         });
     }
     // 3-1
@@ -421,7 +570,7 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '失败且完成度<90%时，与目标相邻的角色有2个已经现身',
             series: '意外',
             unlocked: true,
-            completed: true,
+            completed: nXr('3-1'),
         });
     }
     // 3-2
@@ -433,7 +582,7 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '失败且完成度<90%时，与目标相邻的角色有3个已经现身',
             series: '意外',
             unlocked: true,
-            completed: true,
+            completed: nXr('3-2'),
         });
     }
     // 3-3
@@ -445,7 +594,7 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '失败且完成度<90%时，与目标相邻的角色有4个已经现身',
             series: '意外',
             unlocked: true,
-            completed: true,
+            completed: nXr('3-3'),
         });
     }
     // 3-4
@@ -457,7 +606,7 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '失败且完成度<90%时，在目标周围的角色有8个已经现身',
             series: '意外',
             unlocked: true,
-            completed: true,
+            completed: nXr('3-4'),
         });
     }
     // 3-5
@@ -469,7 +618,7 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             note: '因目标被【杀手】干掉而失败',
             series: '意外',
             unlocked: true,
-            completed: true,
+            completed: nXr('3-5'),
         });
     }
     // 100-0
@@ -485,6 +634,9 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
         });
     }
     ach.forEach((value, key) => {
+        if (init.length > 0) {
+            value.completed = false;
+        }
         statistic.currentAchievements.set(key, value);
         if (!statistic.historyAchievements.has(key)) {
             statistic.historyAchievements.set(key, value);
@@ -497,6 +649,7 @@ function updateCurrentAndHistoryAchivement(statistic: Statistic): Statistic {
             }
         }
     });
+    setStorage('statistic', statistic);
     return statistic;
 }
 
@@ -555,17 +708,19 @@ function loadMetricsFromGameState(gameState: GameState): Statistic {
         }
     }
     gameState.statistic.mCompleteRatio =
-        (revealed / (gameState.spots[0].length * gameState.spots.length)) *
-            100 +
-        '%';
+        Math.floor(
+            (revealed / (gameState.spots[0].length * gameState.spots.length)) *
+                100,
+        ) + '%';
     return gameState.statistic;
 }
 
 export {
+    Rarity,
     groupbyHistoryAchivementBySeries,
     initStatistic,
     loadMetricsFromGameState,
     updateCurrentAndHistoryAchivement,
     updateCurrentRanks,
 };
-export type { Statistic };
+export type { Achivement, Statistic };
