@@ -1,6 +1,6 @@
 import { nearEight } from '@/utils/graph';
 import Role, { RolesType } from '../../../models/role';
-import { SpotBoxState, SpotVisible } from '../../../models/spot';
+import { SpotVisible } from '../../../models/spot';
 import { GameState } from '../../public/game';
 const Sheriff = (): Role => {
     return {
@@ -10,42 +10,45 @@ const Sheriff = (): Role => {
         color: '#5d4037',
         type: RolesType.LIGHT,
         onRevealed: (gameState: GameState, x: number, y: number) => {
-            var init = 8;
-            var nears = nearEight(gameState.spots, x, y);
-            for (var near of nears) {
-                if (!near || near.visible == SpotVisible.REVEALED) init--;
-            }
-            if (init == 0) {
+            if (isNearEightRevealed(gameState, x, y)) {
                 gameState.chances = gameState.chances * 2 + 2;
             } else {
                 if (!gameState.spots[x][y].attrs) {
                     gameState.spots[x][y].attrs = new Map();
                 }
-                gameState.spots[x][y].attrs!.set('sheriffRemain', init);
+                gameState.spots[x][y].attrs!.set('sheriffOn', true);
             }
 
             return gameState;
         },
-        onActivating: (
-            gameState: GameState,
-            x: number,
-            y: number,
-            revealing: SpotBoxState,
-        ) => {
-            if (gameState.spots[x][y].role.id != 'sheriff') return gameState;
-            let sheriff = gameState.spots[x][y];
-            if (!sheriff.attrs) return gameState;
-            let old = sheriff.attrs.get('sheriffRemain');
-            sheriff.attrs.set('sheriffRemain', old - 1);
-            if (sheriff.attrs.get('sheriffRemain') == 0) {
-                gameState.chances = gameState.chances * 2 + 2;
-                sheriff.attrs.delete('sheriffRemain');
+        onRoundOver: (gameState: GameState) => {
+            for (var i = 0; i < gameState.spots.length; i++) {
+                for (var j = 0; j < gameState.spots[0].length; j++) {
+                    if (gameState.spots[i][j].role.id != 'sheriff') continue;
+                    let sheriff = gameState.spots[i][j];
+                    if (!sheriff.attrs) continue;
+                    let on = sheriff.attrs.get('sheriffOn');
+                    if (on && isNearEightRevealed(gameState, i, j)) {
+                        gameState.chances = gameState.chances * 2 + 2;
+                        sheriff.attrs.delete('sheriffOn');
+                    }
+                }
             }
+
             return gameState;
         },
     };
 };
 export default Sheriff;
+
+const isNearEightRevealed = (gameState: GameState, x: number, y: number) => {
+    var init = 8;
+    var nears = nearEight(gameState.spots, x, y);
+    for (var near of nears) {
+        if (!near || near.visible == SpotVisible.REVEALED) init--;
+    }
+    return init == 0;
+};
 // async function sheriffOnClick(e, context, i, j) {
 //     var init = 8;
 //     var nears = await COMMON.nearEight(context.boxArray, i, j);

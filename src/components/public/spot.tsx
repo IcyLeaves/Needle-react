@@ -11,7 +11,6 @@ import {
     SpotStatus,
     SpotVisible,
 } from '../../models/spot';
-import { nearEight } from '../../utils/graph';
 import { Buff } from '../buffs/buffs';
 import MoneyBag from '../buffs/fortune';
 import { Bro, Stop } from '../buffs/ganster';
@@ -141,17 +140,6 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
 
                     gameState.spots[state.x][state.y].visible =
                         SpotVisible.REVEALED;
-                    // sheriffsta
-                    let nears = nearEight(gameState.spots, x, y);
-                    for (var near of nears) {
-                        if (!near) continue;
-                        gameState = Sheriff().onActivating!(
-                            gameState,
-                            near.x,
-                            near.y,
-                            state,
-                        );
-                    }
                     for (let i = 0; i < gameState.spots.length; i++) {
                         for (let j = 0; j < gameState.spots[i].length; j++) {
                             gameState = Killer().onActivating!(
@@ -170,12 +158,6 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                         gameState = Fortune().onRevealed!(gameState, x, y);
                     }
                 }
-                for (let i = 0; i < gameState.spots.length; i++) {
-                    for (let j = 0; j < gameState.spots[i].length; j++) {
-                        gameState = Ganster().onActivating!(gameState, i, j);
-                    }
-                }
-                gameState = Ganster().onRoundOver!(gameState);
                 break;
             case GameStatus.SHOOTING:
                 // 进入射击, TODO OnShooting
@@ -192,6 +174,10 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                 }
                 break;
         }
+
+        gameState = Ganster().onRoundOver!(gameState);
+
+        gameState = Sheriff().onRoundOver!(gameState);
         gameState.clicks = gameState.clicks + 1;
         if (gameState.chances <= 0) {
             gameState.isGameOver = true;

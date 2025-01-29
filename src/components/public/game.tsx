@@ -107,7 +107,7 @@ const InitSpotStates = (
                 x: i,
                 y: j,
                 role: deck.draw()!,
-                visible: SpotVisible.HIDDEN, // dev use VISIBLE
+                visible: SpotVisible.VISIBLE, // dev use VISIBLE
                 status: SpotStatus.IDLE,
                 buffs: new Map(),
                 attrs: new Map(),
