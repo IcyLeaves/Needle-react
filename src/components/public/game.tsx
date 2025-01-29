@@ -1,8 +1,14 @@
 import * as styled from '@/app/style';
 import FoundProgress from '@/components/public/note';
-import { BookFilled, QuestionCircleFilled } from '@ant-design/icons';
-import { Button, Col, Divider, Flex, Row } from 'antd';
+import {
+    BookFilled,
+    QuestionCircleFilled,
+    ThunderboltOutlined,
+    TrophyOutlined,
+} from '@ant-design/icons';
+import { Button, Col, Divider, Dropdown, Flex, MenuProps, Row } from 'antd';
 import { Content, Header } from 'antd/es/layout/layout';
+import { useRouter } from 'next/navigation';
 import React, { Dispatch, useEffect, useState } from 'react';
 import Role, { DefaultSpotBoxState } from '../../models/role';
 import { SpotBoxState, SpotStatus, SpotVisible } from '../../models/spot';
@@ -20,7 +26,10 @@ import {
     updateCurrentRanks,
 } from './statistic/statistic';
 import { Tutorial } from './tutorial';
-
+enum GameMode {
+    QUICKPLAY = 'quickplay',
+    STANDARD = 'standard',
+}
 type GameProps = {
     config: GameConfig;
 };
@@ -70,6 +79,7 @@ type GameConfig = {
         [x: string]: number;
     };
     seed: string;
+    mode: GameMode;
 };
 
 type GameDispatches = {
@@ -118,6 +128,7 @@ const InitSpotStates = (
 };
 
 const Game: React.FC<GameProps> = ({ config }) => {
+    const router = useRouter();
     const [state, updateState] = useState<GameState>({
         seed: new Seed(config.seed),
         chances: config.chances,
@@ -157,7 +168,24 @@ const Game: React.FC<GameProps> = ({ config }) => {
         infoSpot: infoSpot,
         setinfoSpot: setinfoSpot,
     };
-
+    const startQuickplay = () => {
+        router.push(`/?mode=${GameMode.QUICKPLAY}`);
+    };
+    const startStandard = () => {
+        router.push(`/?mode=${GameMode.STANDARD}`);
+    };
+    const items: MenuProps['items'] = [
+        {
+            key: '1',
+            label: <div onClick={startQuickplay}>快速模式</div>,
+            icon: <ThunderboltOutlined onClick={startQuickplay} />,
+        },
+        {
+            key: '2',
+            label: <div onClick={startStandard}>标准模式</div>,
+            icon: <TrophyOutlined onClick={startStandard} />,
+        },
+    ];
     return (
         <>
             <Header style={styled.headerStyle}>
@@ -173,10 +201,6 @@ const Game: React.FC<GameProps> = ({ config }) => {
                             >
                                 <QuestionCircleFilled />
                             </Button>
-                            <Tutorial
-                                open={tutorialOpened}
-                                setOpen={setTutorialOpened}
-                            ></Tutorial>
                             <Button
                                 style={styled.titleIconStyle}
                                 size="large"
@@ -186,16 +210,36 @@ const Game: React.FC<GameProps> = ({ config }) => {
                             >
                                 <BookFilled />
                             </Button>
-                            <Awards
-                                open={AwardsOpened}
-                                setOpen={setAwardsOpened}
-                                gameState={state}
-                            ></Awards>
                         </Col>
                         <Col span={12} style={styled.colCenterStyle}>
-                            <div style={styled.bigTitleStyle}>Needle v3.0</div>
+                            <div style={styled.bigTitleStyle}>Needle v3.1</div>
                         </Col>
-                        <Col span={3}></Col>
+                        <Col span={3}>
+                            <Dropdown menu={{ items }}>
+                                <Button
+                                    style={{
+                                        ...styled.titleIconStyle,
+                                    }}
+                                    size="large"
+                                    onClick={e => {
+                                        if (
+                                            config.mode === GameMode.QUICKPLAY
+                                        ) {
+                                            startQuickplay();
+                                        } else {
+                                            startStandard();
+                                        }
+                                    }}
+                                    className="success-btn"
+                                >
+                                    {config.mode === GameMode.STANDARD ? (
+                                        <TrophyOutlined />
+                                    ) : (
+                                        <ThunderboltOutlined />
+                                    )}
+                                </Button>
+                            </Dropdown>
+                        </Col>
                     </Row>
                 </Flex>
             </Header>
@@ -243,6 +287,16 @@ const Game: React.FC<GameProps> = ({ config }) => {
                     gameState={state}
                 ></Rank>
             </Content>
+
+            <Tutorial
+                open={tutorialOpened}
+                setOpen={setTutorialOpened}
+            ></Tutorial>
+            <Awards
+                open={AwardsOpened}
+                setOpen={setAwardsOpened}
+                gameState={state}
+            ></Awards>
         </>
     );
 };
@@ -260,5 +314,5 @@ const onRoundOver = (gameState: GameState): GameState => {
     if (gameState.chances === 1) gameState.statistic.mChancesOnlyOneFrequent++;
     return gameState;
 };
-export { Game, SearchAllSpots, onGameOver, onRoundOver };
+export { Game, GameMode, SearchAllSpots, onGameOver, onRoundOver };
 export type { GameConfig, GameDispatches, GameState };

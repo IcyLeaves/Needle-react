@@ -63,3 +63,14 @@
 .award-row {
     padding-bottom: 20px;
 }
+.success-btn {
+    color: #fff;
+    background-color: #53c41a;
+    border-color: transparent;
+}
+
+.success-btn:not(:disabled):not(.ant-btn-disabled):hover {
+    color: #fff;
+    background-color: #68d134;
+    border-color: transparent;
+}

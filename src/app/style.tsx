@@ -49,6 +49,11 @@ const titleIconStyle: React.CSSProperties = {
     margin: '10px',
 };
 
+const successButtonStyle: React.CSSProperties = {
+    color: '#ffffff',
+    backgroundColor: '#52c41a',
+};
+
 const colCenterStyle: React.CSSProperties = {
     display: 'flex',
     justifyContent: 'center',
@@ -166,5 +171,6 @@ export {
     sideColStyle,
     sideTitleStyle,
     siderStyle,
+    successButtonStyle,
     titleIconStyle,
 };

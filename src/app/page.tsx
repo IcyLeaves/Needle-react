@@ -5,9 +5,13 @@ import Citizen from '@/components/roles/citizen/citizen';
 import Detective from '@/components/roles/detective/detective';
 import Target from '@/components/roles/target/target';
 import { ConfigProvider, Layout, Spin } from 'antd';
-import { useRouter, useSearchParams } from 'next/navigation';
+import {
+    ReadonlyURLSearchParams,
+    useRouter,
+    useSearchParams,
+} from 'next/navigation';
 import React, { Suspense, useEffect } from 'react';
-import { Game, GameConfig } from '../components/public/game';
+import { Game, GameConfig, GameMode } from '../components/public/game';
 import Augur from '../components/roles/augur/augur';
 import BangBang from '../components/roles/bangbang/bangbang';
 import Copies from '../components/roles/copies/copies';
@@ -22,17 +26,44 @@ import Witch from '../components/roles/witch/witch';
 import * as styled from './style';
 const { Header, Footer, Sider, Content } = Layout;
 const alignOptions = ['flex-start', 'center', 'flex-end'];
+
 const App: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const seed = searchParams.get('seed');
-    useEffect(() => {
-        if (!seed) {
-            const randomSeed = Math.floor(Math.random() * 1000000).toString();
-            router.push('?seed=' + randomSeed);
+    const mode = searchParams.get('mode');
+    let initGameModeAndSeed = (
+        urlParams: ReadonlyURLSearchParams,
+    ): { mode: GameMode; seed: string } => {
+        const mode = urlParams.get('mode');
+        const seed = urlParams.get('seed');
+        const nowSeed = generateTimeBasedString();
+        const randomSeed = Math.floor(Math.random() * 1000000).toString();
+
+        switch (mode) {
+            case GameMode.QUICKPLAY:
+                if (!seed) {
+                    return { mode: mode, seed: randomSeed };
+                }
+                return { mode: mode, seed: seed };
+            case GameMode.STANDARD:
+                return { mode: mode, seed: nowSeed };
+            default:
+                if (!seed) {
+                    return { mode: GameMode.QUICKPLAY, seed: randomSeed };
+                } else if (seed === nowSeed) {
+                    return { mode: GameMode.STANDARD, seed: seed };
+                }
+                return { mode: GameMode.QUICKPLAY, seed: randomSeed };
         }
-    }, [router, seed]);
-    if (!seed) {
+    };
+
+    useEffect(() => {
+        let params = initGameModeAndSeed(searchParams);
+        router.push(`?seed=${params.seed}&mode=${params.mode}`);
+    }, [router, searchParams]);
+
+    if (!seed || !mode) {
         return <></>;
     }
     const boardConfig: GameConfig = {
@@ -56,6 +87,7 @@ const App: React.FC = () => {
             [BangBang().id]: 3,
         },
         seed: seed!.toString(),
+        mode: mode as GameMode,
     };
     // setStorage('statistic', null); // dev
 
@@ -89,4 +121,21 @@ export default function AppWrapper() {
             <App />
         </Suspense>
     );
+}
+
+function generateTimeBasedString() {
+    const currentTime = new Date();
+    const timeZoneOffset = currentTime.getTimezoneOffset();
+    const unixTimestamp = currentTime.getTime() / 1000 + timeZoneOffset * 60;
+    const twoHourBlock = Math.floor(unixTimestamp / 7200);
+    const hexString = twoHourBlock.toString(16).padStart(16, '0');
+    const base32Alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    let base32String = '';
+    for (let i = 0; i < hexString.length; i += 2) {
+        const hexPair = hexString.slice(i, i + 2);
+        const decimalValue = parseInt(hexPair, 16);
+        const base32Index = decimalValue % 32;
+        base32String += base32Alphabet[base32Index];
+    }
+    return base32String;
 }
