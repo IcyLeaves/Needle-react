@@ -1,5 +1,5 @@
 import { Col, Progress, Row } from 'antd';
-import Role from '../../models/role';
+import Role, { DefaultSpotBoxState } from '../../models/role';
 import { SpotVisible } from '../../models/spot';
 import Augur from '../roles/augur/augur';
 import BangBang from '../roles/bangbang/bangbang';
@@ -67,6 +67,7 @@ const FoundProgress: React.FC<{ gameDispatches: GameDispatches }> = props => {
         Ganster().id,
         BangBang().id,
     ];
+
     return (
         <>
             {roleMapKeysKeys.map(key => (
@@ -75,6 +76,7 @@ const FoundProgress: React.FC<{ gameDispatches: GameDispatches }> = props => {
                     role={str2role(key)}
                     found={roleMap[key].found}
                     total={roleMap[key].total}
+                    gameDispatches={gameDispatches}
                 />
             ))}
         </>
@@ -82,14 +84,40 @@ const FoundProgress: React.FC<{ gameDispatches: GameDispatches }> = props => {
 };
 
 // 一行进度
-const Note: React.FC<{ role: Role; found: number; total: number }> = props => {
-    const { role, found, total } = props;
+const Note: React.FC<{
+    role: Role;
+    found: number;
+    total: number;
+    gameDispatches: GameDispatches;
+}> = props => {
+    const { role, found, total, gameDispatches } = props;
+    const handleMouseEnter = (event: any) => {
+        if (!gameDispatches.setinfoSpot) {
+            return;
+        }
+        gameDispatches.setinfoSpot({
+            ...DefaultSpotBoxState,
+            ...{
+                role: role,
+            },
+        });
+    };
+
+    const handleMouseLeave = (event: any) => {
+        if (!gameDispatches.setinfoSpot) {
+            return;
+        }
+
+        gameDispatches.setinfoSpot(DefaultSpotBoxState);
+    };
     return (
         <Row
             style={{
                 paddingLeft: '15px',
                 paddingRight: '15px',
             }}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
         >
             <Col span={6}>
                 <RoleLabel role={role} />

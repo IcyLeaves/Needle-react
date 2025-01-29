@@ -1,13 +1,25 @@
 import * as styled from '@/app/style';
 import FoundProgress from '@/components/public/note';
-import { Col, Divider, Flex, Row } from 'antd';
-import React, { Dispatch, useState } from 'react';
-import Role from '../../models/role';
+import { BookFilled, QuestionCircleFilled } from '@ant-design/icons';
+import { Button, Col, Divider, Flex, Row } from 'antd';
+import { Content, Header } from 'antd/es/layout/layout';
+import React, { Dispatch, useEffect, useState } from 'react';
+import Role, { DefaultSpotBoxState } from '../../models/role';
 import { SpotBoxState, SpotStatus, SpotVisible } from '../../models/spot';
 import { Deck, Seed } from '../../utils/draw';
 import str2role from '../roles/roles';
+import Awards from './award';
 import Board from './board';
 import { Info } from './info';
+import Rank from './rank';
+import {
+    Statistic,
+    initStatistic,
+    loadMetricsFromGameState,
+    updateCurrentAndHistoryAchivement,
+    updateCurrentRanks,
+} from './statistic/statistic';
+import { Tutorial } from './tutorial';
 
 type GameProps = {
     config: GameConfig;
@@ -21,11 +33,14 @@ type GameState = {
     clicks: number;
     status: GameStatus;
     isGameOver: boolean;
+    isWin: boolean;
     onRoundStart: AnyFunction[];
     onFlip: AnyFunction[];
     onThatFlip: AnyFunction[];
     onRevealed: AnyFunction[];
     onThatRevealed: AnyFunction[];
+    //评价系统
+    statistic: Statistic;
 };
 
 export enum GameStatus {
@@ -60,8 +75,8 @@ type GameConfig = {
 type GameDispatches = {
     gameState: GameState;
     setGameState: Dispatch<GameState>;
-    infoRoles: Role[];
-    setInfoRoles: Dispatch<Role[]>;
+    infoSpot: SpotBoxState;
+    setinfoSpot: Dispatch<SpotBoxState>;
 };
 const Chance: React.FC<{ chance: number }> = props => {
     const { chance } = props;
@@ -115,54 +130,135 @@ const Game: React.FC<GameProps> = ({ config }) => {
         onRevealed: [],
         onThatRevealed: [],
         isGameOver: false,
+        isWin: false,
+        statistic: initStatistic(),
     });
     const [key, setKey] = useState(0);
+    const [rankOpen, setRankOpen] = useState(false);
+
+    const [tutorialOpened, setTutorialOpened] = React.useState(false);
+    const [AwardsOpened, setAwardsOpened] = React.useState(false);
+
+    useEffect(() => {
+        if (state.isGameOver) {
+            setRankOpen(true);
+        }
+    }, [state.isGameOver]);
 
     const setState: Dispatch<GameState> = (newState: GameState) => {
         updateState(newState);
         setKey(Math.random());
     };
 
-    const [infoRoles, setInfoRoles] = useState<Role[]>([]);
+    const [infoSpot, setinfoSpot] = useState<SpotBoxState>(DefaultSpotBoxState);
     let gameDispatches: GameDispatches = {
         gameState: state,
         setGameState: setState,
-        infoRoles: infoRoles,
-        setInfoRoles: setInfoRoles,
+        infoSpot: infoSpot,
+        setinfoSpot: setinfoSpot,
     };
+
     return (
         <>
-            {/* hidden */}
-            <div style={{ display: 'none' }} key={key}></div>
-            <div style={styled.gameModeStyle}>{state.chances}</div>
-            <Divider />
-            <Row
-                style={
-                    state.status === GameStatus.SHOOTING
-                        ? styled.BangCursorStyle
-                        : {}
-                }
-            >
-                <Col span={6}>
-                    <b style={styled.sideTitleStyle}>说明</b>
-                    <div id="description-board" style={styled.sideColStyle}>
-                        <Info gameDispatches={gameDispatches} />
-                    </div>
-                </Col>
-                <Col span={12} style={styled.midColStyle}>
-                    <Board gameDispatches={gameDispatches} />
-                    <Chance chance={state.chances} />
-                </Col>
-                <Col span={6}>
-                    <b style={styled.sideTitleStyle}>笔记</b>
-                    <Flex gap="small" vertical>
-                        <FoundProgress gameDispatches={gameDispatches} />
-                    </Flex>
-                </Col>
-            </Row>
+            <Header style={styled.headerStyle}>
+                <Flex gap="middle" align="center" justify="center" vertical>
+                    <Row style={styled.rowStyle}>
+                        <Col span={3} offset={3}>
+                            <Button
+                                style={styled.titleIconStyle}
+                                size="large"
+                                onClick={() => {
+                                    setTutorialOpened(true);
+                                }}
+                            >
+                                <QuestionCircleFilled />
+                            </Button>
+                            <Tutorial
+                                open={tutorialOpened}
+                                setOpen={setTutorialOpened}
+                            ></Tutorial>
+                            <Button
+                                style={styled.titleIconStyle}
+                                size="large"
+                                onClick={() => {
+                                    setAwardsOpened(true);
+                                }}
+                            >
+                                <BookFilled />
+                            </Button>
+                            <Awards
+                                open={AwardsOpened}
+                                setOpen={setAwardsOpened}
+                                gameState={state}
+                            ></Awards>
+                        </Col>
+                        <Col span={12} style={styled.colCenterStyle}>
+                            <div style={styled.bigTitleStyle}>Needle v3.0</div>
+                        </Col>
+                        <Col span={3}></Col>
+                    </Row>
+                </Flex>
+            </Header>
+
+            <Content style={styled.contentStyle}>
+                <Divider />
+                {/* hidden */}
+                <div style={{ display: 'none' }} key={key}></div>
+                <div style={styled.gameModeStyle}>{state.chances}</div>
+                <Divider />
+                <Row
+                    style={{
+                        height: 1000,
+                    }}
+                >
+                    <Col span={6}>
+                        <b style={styled.sideTitleStyle}>说明</b>
+                        <div id="description-board" style={styled.sideColStyle}>
+                            <Info gameDispatches={gameDispatches} />
+                        </div>
+                    </Col>
+                    <Col
+                        span={12}
+                        style={{
+                            ...styled.midtopColStyle,
+                            ...(state.status === GameStatus.SHOOTING
+                                ? styled.BangCursorStyle
+                                : {}),
+                        }}
+                    >
+                        <Board gameDispatches={gameDispatches} />
+                        <Chance chance={state.chances} />
+                    </Col>
+                    <Col span={6}>
+                        <b style={styled.sideTitleStyle}>笔记</b>
+                        <Flex gap="small" vertical>
+                            <FoundProgress gameDispatches={gameDispatches} />
+                        </Flex>
+                    </Col>
+                </Row>
+                <Rank
+                    isWin={state.isWin}
+                    open={rankOpen}
+                    setOpen={setRankOpen}
+                    gameState={state}
+                ></Rank>
+            </Content>
         </>
     );
 };
 
-export { Game, SearchAllSpots };
+const onGameOver = (gameState: GameState): GameState => {
+    gameState.statistic = loadMetricsFromGameState(gameState);
+    gameState.statistic = updateCurrentAndHistoryAchivement(
+        gameState.statistic,
+    );
+    gameState.statistic = updateCurrentRanks(gameState.statistic);
+    return gameState;
+};
+
+const onRoundOver = (gameState: GameState): GameState => {
+    if (gameState.chances === 1) gameState.statistic.mChancesOnlyOneFrequent++;
+    return gameState;
+};
+export { Game, SearchAllSpots, onGameOver, onRoundOver };
 export type { GameConfig, GameDispatches, GameState };

@@ -1,3 +1,5 @@
+import React from 'react';
+
 const headerStyle: React.CSSProperties = {
     textAlign: 'center',
     height: 64,
@@ -86,6 +88,16 @@ const midColStyle: React.CSSProperties = {
     alignItems: 'center',
 };
 
+const midtopColStyle: React.CSSProperties = {
+    borderLeft: 'rgba(128, 128, 128, 0.25) 1px solid',
+    borderRight: 'rgba(128, 128, 128, 0.25) 1px solid',
+    display: 'flex',
+    flexDirection: 'column',
+    // justifyContent: 'center',
+    paddingTop: '30px',
+    alignItems: 'center',
+};
+
 const sideColStyle: React.CSSProperties = {
     // display: flex;
     // flex-direction: column;
@@ -95,8 +107,52 @@ const sideColStyle: React.CSSProperties = {
 const BangCursorStyle: React.CSSProperties = {
     cursor: 'url("/target.png"), auto',
 };
+
+const AwardItemStyle: React.CSSProperties = {};
+const ModalContentStyle: React.CSSProperties = {
+    maxHeight: '90%',
+    overflow: 'hidden',
+    padding: '16px',
+    boxSizing: 'border-box',
+    zIndex: 'inherit',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+};
+const ModalAwardStyle: React.CSSProperties = {
+    width: '100%',
+    display: 'block',
+};
+const ModalTagStyle: React.CSSProperties = {
+    cursor: 'default',
+    margin: '5px 8px',
+    border: 'none',
+    display: 'inline-block',
+    height: '32px',
+    padding: '0 10px',
+    lineHeight: '30px',
+    fontSize: '12px',
+    borderRadius: '4px',
+    boxSizing: 'border-box',
+    whiteSpace: 'nowrap',
+};
+const ModalTagUncompletedStyle: React.CSSProperties = {
+    opacity: 0.3,
+};
+const ModalTitleStyle: React.CSSProperties = {
+    fontWeight: 'bold',
+    fontSize: '30px',
+    margin: '20px 0',
+};
 export {
+    AwardItemStyle,
     BangCursorStyle,
+    ModalAwardStyle,
+    ModalContentStyle,
+    ModalTagStyle,
+    ModalTagUncompletedStyle,
+    ModalTitleStyle,
     bigTitleStyle,
     colCenterStyle,
     contentStyle,
@@ -105,6 +161,7 @@ export {
     headerStyle,
     layoutStyle,
     midColStyle,
+    midtopColStyle,
     rowStyle,
     sideColStyle,
     sideTitleStyle,

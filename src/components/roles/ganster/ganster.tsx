@@ -50,7 +50,6 @@ const Ganster = (): Role => {
                 next = deck.draw();
             }
             if (next) {
-                // console.log('next', gameState.clicks, next.x, next.y);
                 gameState.spots[next.x][next.y].attrs?.set(
                     'next',
                     gameState.clicks,
@@ -76,7 +75,7 @@ const Ganster = (): Role => {
                 for (var j = 0; j < gameState.spots[0].length; j++) {
                     let currBox = gameState.spots[i][j];
                     let next = currBox.attrs?.get('next');
-                    if (next) {
+                    if (next >= 0) {
                         gameState.spots[i][j].buffs.set(Bro().id, Bro());
                         let nears = nearEight(gameState.spots, i, j);
                         for (var near of nears) {

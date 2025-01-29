@@ -34,6 +34,7 @@ const Killer = (): Role => {
             if (revealing.role.id == Target().id) {
                 gameState.chances = 0;
                 revealing.buffs.set(Killed().id, Killed());
+                gameState.statistic.mIsTargetKilled = true;
             }
             // 3.1 如果激活了，idx加1
             currBox.buffs.set(

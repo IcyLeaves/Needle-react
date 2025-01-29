@@ -56,7 +56,6 @@ const Fortune = (): Role => {
                 ) {
                     chosen = deck.draw();
                 }
-                console.log('fortune', chosen);
                 // 3. let him acquire money bag
                 chosen.buffs.set(MoneyBag().id, MoneyBag());
                 chosen.buffs.get(MoneyBag().id)!.idx = 0;

@@ -1,23 +1,13 @@
 'use client';
 
+import '@/components/css/raw.css';
 import Citizen from '@/components/roles/citizen/citizen';
 import Detective from '@/components/roles/detective/detective';
 import Target from '@/components/roles/target/target';
-import { BookFilled, QuestionCircleFilled } from '@ant-design/icons';
-import {
-    Button,
-    Col,
-    ConfigProvider,
-    Divider,
-    Flex,
-    Layout,
-    Row,
-    Spin,
-} from 'antd';
+import { ConfigProvider, Layout, Spin } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect } from 'react';
 import { Game, GameConfig } from '../components/public/game';
-import { Tutorial } from '../components/public/tutorial';
 import Augur from '../components/roles/augur/augur';
 import BangBang from '../components/roles/bangbang/bangbang';
 import Copies from '../components/roles/copies/copies';
@@ -36,7 +26,6 @@ const App: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const seed = searchParams.get('seed');
-    const [tutorialOpened, setTutorialOpened] = React.useState(false);
     useEffect(() => {
         if (!seed) {
             const randomSeed = Math.floor(Math.random() * 1000000).toString();
@@ -68,6 +57,7 @@ const App: React.FC = () => {
         },
         seed: seed!.toString(),
     };
+    // setStorage('statistic', null); // dev
 
     return (
         <ConfigProvider
@@ -88,44 +78,7 @@ const App: React.FC = () => {
             }}
         >
             <Layout style={styled.layoutStyle}>
-                <Header style={styled.headerStyle}>
-                    <Flex gap="middle" align="center" justify="center" vertical>
-                        <Row style={styled.rowStyle}>
-                            <Col span={3} offset={3}>
-                                <Button
-                                    style={styled.titleIconStyle}
-                                    size="large"
-                                    onClick={() => {
-                                        setTutorialOpened(true);
-                                    }}
-                                >
-                                    <QuestionCircleFilled />
-                                </Button>
-                                <Tutorial
-                                    open={tutorialOpened}
-                                    setOpen={setTutorialOpened}
-                                ></Tutorial>
-                                <Button
-                                    style={styled.titleIconStyle}
-                                    size="large"
-                                >
-                                    <BookFilled />
-                                </Button>
-                            </Col>
-                            <Col span={12} style={styled.colCenterStyle}>
-                                <div style={styled.bigTitleStyle}>
-                                    Needle v3.0
-                                </div>
-                            </Col>
-                            <Col span={3}></Col>
-                        </Row>
-                    </Flex>
-                </Header>
-
-                <Content style={styled.contentStyle}>
-                    <Divider />
-                    <Game config={boardConfig} />
-                </Content>
+                <Game config={boardConfig} />
             </Layout>
         </ConfigProvider>
     );

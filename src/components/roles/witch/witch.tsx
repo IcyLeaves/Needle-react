@@ -31,6 +31,9 @@ const Witch = (): Role => {
             if (!currBox.buffs.has(cursing.id)) return gameState;
             // 3. 揭示了且有Buff，可以激活
             if (revealing.role.type == RolesType.DARK) {
+                if (gameState.chances < 1) {
+                    gameState.statistic.mIsAddChancesByWitch = true;
+                }
                 gameState.chances = 1;
             }
 
