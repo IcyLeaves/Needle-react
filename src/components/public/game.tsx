@@ -210,7 +210,7 @@ const Game: React.FC<GameProps> = ({ config }) => {
                             </Button>
                         </Col>
                         <Col span={12} style={styled.colCenterStyle}>
-                            <div style={styled.bigTitleStyle}>Needle v3.0</div>
+                            <div style={styled.bigTitleStyle}>Needle v3.1</div>
                         </Col>
                         <Col span={3}>
                             <Dropdown menu={{ items }}>
