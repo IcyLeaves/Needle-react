@@ -25,7 +25,13 @@ import Killer from '../roles/killer/killer';
 import Sheriff from '../roles/sheriff/sheriff';
 import Volunteer from '../roles/volunteer/volunteer';
 import Witch from '../roles/witch/witch';
-import { GameDispatches, GameStatus, SearchAllSpots, onGameOver } from './game';
+import {
+    GameDispatches,
+    GameStatus,
+    SearchAllSpots,
+    onGameOver,
+    onRoundOver,
+} from './game';
 
 const isLocked = (gameDispatches: GameDispatches, state: SpotBoxState) => {
     return (
@@ -135,7 +141,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
 
                     gameState.spots[state.x][state.y].visible =
                         SpotVisible.REVEALED;
-                    // sheriff
+                    // sheriffsta
                     let nears = nearEight(gameState.spots, x, y);
                     for (var near of nears) {
                         if (!near) continue;
@@ -146,14 +152,6 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                             state,
                         );
                     }
-
-                    if (role.onRevealed) {
-                        //揭露时
-                        gameState = role.onRevealed(gameState, x, y);
-                    }
-                    if (state.role.id != Fortune().id) {
-                        gameState = Fortune().onRevealed!(gameState, x, y);
-                    }
                     for (let i = 0; i < gameState.spots.length; i++) {
                         for (let j = 0; j < gameState.spots[i].length; j++) {
                             gameState = Killer().onActivating!(
@@ -163,6 +161,13 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                                 state,
                             );
                         }
+                    }
+                    if (role.onRevealed) {
+                        //揭露时
+                        gameState = role.onRevealed(gameState, x, y);
+                    }
+                    if (state.role.id != Fortune().id) {
+                        gameState = Fortune().onRevealed!(gameState, x, y);
                     }
                 }
                 for (let i = 0; i < gameState.spots.length; i++) {
@@ -190,8 +195,8 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         gameState.clicks = gameState.clicks + 1;
         if (gameState.chances <= 0) {
             gameState.isGameOver = true;
-            gameState.isWin = false;
         }
+        onRoundOver(gameState);
         onGameOver(gameState);
         setGameState(gameState);
     };

@@ -1,4 +1,5 @@
 import Role, { RolesType } from '../../../models/role';
+import { Killed } from '../../buffs/killer';
 import { GameState } from '../../public/game';
 
 const Target = (): Role => {
@@ -8,9 +9,12 @@ const Target = (): Role => {
         description: '这就是你要找的人',
         color: '#66bb6a',
         type: RolesType.LIGHT,
-        onRevealed: (gameState: GameState) => {
+        onRevealed: (gameState: GameState, x: number, y: number) => {
             gameState.isGameOver = true;
-            gameState.isWin = true;
+            if (!gameState.spots[x][y].buffs.has(Killed().id)) {
+                gameState.isWin = true;
+                gameState.statistic.mIsGameWin = true;
+            }
             return gameState;
         },
     };

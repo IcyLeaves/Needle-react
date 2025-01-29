@@ -1,5 +1,6 @@
 'use client';
 
+import '@/components/css/raw.css';
 import Citizen from '@/components/roles/citizen/citizen';
 import Detective from '@/components/roles/detective/detective';
 import Target from '@/components/roles/target/target';
@@ -18,9 +19,7 @@ import Reporter from '../components/roles/reporter/reporter';
 import Sheriff from '../components/roles/sheriff/sheriff';
 import Volunteer from '../components/roles/volunteer/volunteer';
 import Witch from '../components/roles/witch/witch';
-import { setStorage } from '../utils/cookie';
 import * as styled from './style';
-import '@/components/css/raw.css';
 const { Header, Footer, Sider, Content } = Layout;
 const alignOptions = ['flex-start', 'center', 'flex-end'];
 const App: React.FC = () => {
@@ -58,7 +57,7 @@ const App: React.FC = () => {
         },
         seed: seed!.toString(),
     };
-    setStorage('statistic', null); // dev
+    // setStorage('statistic', null); // dev
 
     return (
         <ConfigProvider

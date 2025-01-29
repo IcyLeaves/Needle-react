@@ -107,7 +107,7 @@ const InitSpotStates = (
                 x: i,
                 y: j,
                 role: deck.draw()!,
-                visible: SpotVisible.VISIBLE, // dev use VISIBLE
+                visible: SpotVisible.HIDDEN, // dev use VISIBLE
                 status: SpotStatus.IDLE,
                 buffs: new Map(),
                 attrs: new Map(),
@@ -256,5 +256,9 @@ const onGameOver = (gameState: GameState): GameState => {
     return gameState;
 };
 
-export { Game, SearchAllSpots, onGameOver };
+const onRoundOver = (gameState: GameState): GameState => {
+    if (gameState.chances === 1) gameState.statistic.mChancesOnlyOneFrequent++;
+    return gameState;
+};
+export { Game, SearchAllSpots, onGameOver, onRoundOver };
 export type { GameConfig, GameDispatches, GameState };
