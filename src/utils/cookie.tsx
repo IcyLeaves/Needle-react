@@ -1,3 +1,5 @@
+import { mapJSONParse, mapJSONStringify } from './map';
+
 function getStorage<T>(name: string): T {
     if (typeof localStorage === 'undefined') {
         return {} as T;
@@ -6,14 +8,15 @@ function getStorage<T>(name: string): T {
     if (!str || str === '' || str === '{}') {
         return {} as T; // Add type annotation here
     }
-    return JSON.parse(str);
+    let obj: T = mapJSONParse(str);
+    return obj;
 }
 
 function setStorage<T>(name: string, obj: T) {
     if (typeof localStorage !== 'undefined') {
         // 在这里使用 localStorage
-
-        localStorage.setItem(name, JSON.stringify(obj));
+        let str = mapJSONStringify(obj);
+        localStorage.setItem(name, str);
     }
 }
 

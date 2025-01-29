@@ -16,48 +16,12 @@ const Ganster = (): Role => {
             currBox.attrs?.set('next', gameState.clicks);
             return gameState;
         },
-        onActivating: (
-            gameState: GameState,
-            x: number,
-            y: number,
-        ): GameState => {
-            let currBox = gameState.spots[x][y];
-            if (!currBox.buffs.get(Bro().id)) return gameState;
-            let neighbors = nearFour(
-                x,
-                y,
-                gameState.spots.length,
-                gameState.spots[0].length,
-            );
-            let deck = new Deck<Point | undefined>(
-                neighbors,
-                gameState.seed.seed,
-                gameState.seed.random,
-            );
-            let next = deck.draw();
-            // 1. 不是已经被别的 bro 标记的地方
-            let hasNext = (next: Point): boolean =>
-                gameState.spots[next.x][next.y].attrs?.get('next') ===
-                gameState.clicks;
-            // 2. 超出边界
-            // 3. 没有其他 bro
-            let hasBro = (next: Point): boolean =>
-                gameState.spots[next.x][next.y].buffs.has(Bro().id);
-            while (
-                ((next && (hasNext(next) || hasBro(next))) || !next) &&
-                deck.count() > 0
-            ) {
-                next = deck.draw();
-            }
-            if (next) {
-                gameState.spots[next.x][next.y].attrs?.set(
-                    'next',
-                    gameState.clicks,
-                );
-            }
-            return gameState;
-        },
         onRoundOver: (gameState: GameState): GameState => {
+            for (var i = 0; i < gameState.spots.length; i++) {
+                for (var j = 0; j < gameState.spots[0].length; j++) {
+                    activating(gameState, i, j);
+                }
+            }
             for (var i = 0; i < gameState.spots.length; i++) {
                 for (var j = 0; j < gameState.spots[0].length; j++) {
                     gameState.spots[i][j].buffs.delete(Stop().id);
@@ -95,3 +59,37 @@ const Ganster = (): Role => {
 };
 
 export default Ganster;
+
+const activating = (gameState: GameState, x: number, y: number): GameState => {
+    let currBox = gameState.spots[x][y];
+    if (!currBox.buffs.get(Bro().id)) return gameState;
+    let neighbors = nearFour(
+        x,
+        y,
+        gameState.spots.length,
+        gameState.spots[0].length,
+    );
+    let deck = new Deck<Point | undefined>(
+        neighbors,
+        gameState.seed.seed,
+        gameState.seed.random,
+    );
+    let next = deck.draw();
+    // 1. 不是已经被别的 bro 标记的地方
+    let hasNext = (next: Point): boolean =>
+        gameState.spots[next.x][next.y].attrs?.get('next') === gameState.clicks;
+    // 2. 超出边界
+    // 3. 没有其他 bro
+    let hasBro = (next: Point): boolean =>
+        gameState.spots[next.x][next.y].buffs.has(Bro().id);
+    while (
+        ((next && (hasNext(next) || hasBro(next))) || !next) &&
+        deck.count() > 0
+    ) {
+        next = deck.draw();
+    }
+    if (next) {
+        gameState.spots[next.x][next.y].attrs?.set('next', gameState.clicks);
+    }
+    return gameState;
+};

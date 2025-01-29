@@ -60,7 +60,11 @@ type Rank = {
 
 function initStatistic(): Statistic {
     let storage = getStorage<Statistic>('statistic');
-    if (!storage || !storage.historyAchievements) {
+    if (
+        !storage ||
+        !storage.historyAchievements ||
+        !storage.historyAchievements.forEach
+    ) {
         let initial = {
             historyAchievements: new Map(),
             currentAchievements: new Map(),
@@ -630,7 +634,7 @@ function updateCurrentAndHistoryAchivement(
             note: '感谢一位玩家在2022/04/23发现的成就系统巨大漏洞',
             series: '特别感谢',
             unlocked: true,
-            completed: true,
+            completed: false,
         });
     }
     ach.forEach((value, key) => {
@@ -686,6 +690,13 @@ function groupbyHistoryAchivementBySeries(
     statistic: Statistic,
 ): Map<string, Achivement[]> {
     const map = new Map<string, Achivement[]>();
+    if (
+        !statistic ||
+        !statistic.historyAchievements ||
+        !statistic.historyAchievements.forEach
+    ) {
+        return map;
+    }
     statistic.historyAchievements.forEach((value, key) => {
         if (!map.has(value.series)) {
             map.set(value.series, []);
