@@ -303,6 +303,13 @@ const Game: React.FC<GameProps> = ({ config }) => {
 
 const onGameOver = (gameState: GameState): GameState => {
     if (!gameState.isGameOver) return gameState;
+    for (let i = 0; i < gameState.spots.length; i++) {
+        for (let j = 0; j < gameState.spots[i].length; j++) {
+            if (gameState.spots[i][j].visible === SpotVisible.HIDDEN) {
+                gameState.spots[i][j].visible = SpotVisible.VISIBLE;
+            }
+        }
+    }
     gameState.statistic = loadMetricsFromGameState(gameState);
     gameState.statistic = updateCurrentAndHistoryAchivement(
         gameState.statistic,
