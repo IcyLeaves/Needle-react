@@ -176,7 +176,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         }
 
         gameState = Ganster().onRoundOver!(gameState);
-
+        gameState = Witch().onRoundOver!(gameState);
         gameState = Sheriff().onRoundOver!(gameState);
         gameState.clicks = gameState.clicks + 1;
         if (gameState.chances <= 0) {

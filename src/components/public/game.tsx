@@ -13,7 +13,10 @@ import React, { Dispatch, useEffect, useState } from 'react';
 import Role, { DefaultSpotBoxState } from '../../models/role';
 import { SpotBoxState, SpotStatus, SpotVisible } from '../../models/spot';
 import { Deck, Seed } from '../../utils/draw';
+import { Wasted } from '../buffs/bangbang';
+import { Bro, Stop } from '../buffs/ganster';
 import str2role from '../roles/roles';
+import Target from '../roles/target/target';
 import Awards from './award';
 import Board from './board';
 import { Info } from './info';
@@ -117,7 +120,7 @@ const InitSpotStates = (
                 x: i,
                 y: j,
                 role: deck.draw()!,
-                visible: SpotVisible.HIDDEN, // dev use VISIBLE
+                visible: SpotVisible.VISIBLE, // dev use VISIBLE
                 status: SpotStatus.IDLE,
                 buffs: new Map(),
                 attrs: new Map(),
@@ -320,6 +323,28 @@ const onGameOver = (gameState: GameState): GameState => {
 
 const onRoundOver = (gameState: GameState): GameState => {
     if (gameState.chances === 1) gameState.statistic.mChancesOnlyOneFrequent++;
+    var canClick = false; // 无法点击
+    for (let i = 0; i < gameState.spots.length; i++) {
+        for (let j = 0; j < gameState.spots[i].length; j++) {
+            var state = gameState.spots[i][j];
+            if (
+                state.buffs.get(Stop().id) === undefined &&
+                state.buffs.get(Bro().id) === undefined &&
+                state.visible !== SpotVisible.REVEALED
+            ) {
+                canClick = true;
+            }
+            // 目标bang死了
+            if (state.role.id === Target().id && state.buffs.has(Wasted().id)) {
+                gameState.isGameOver = true;
+                gameState.statistic.mIsTargetWasted = true;
+            }
+        }
+    }
+    if (!canClick) {
+        gameState.isGameOver = true;
+        gameState.statistic.mIsGameOverByGanster = true;
+    }
     return gameState;
 };
 export { Game, GameMode, SearchAllSpots, onGameOver, onRoundOver };

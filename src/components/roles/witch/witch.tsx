@@ -47,9 +47,21 @@ const Witch = (): Role => {
             // 3.1 如果激活了，idx加1
             currBox.buffs.get(cursing.id)!.idx =
                 currBox.buffs.get(cursing.id)!.idx! + 1;
-            if (currBox.buffs.get(cursing.id)!.idx! >= 2) {
-                // 3.2 如果idx大于等于2，删除
-                currBox.buffs.delete(cursing.id);
+
+            return gameState;
+        },
+        onRoundOver: (gameState: GameState): GameState => {
+            let cursing = Cursing();
+            for (var i = 0; i < gameState.spots.length; i++) {
+                for (var j = 0; j < gameState.spots[0].length; j++) {
+                    if (!gameState.spots[i][j].buffs.has(cursing.id)) continue;
+                    if (
+                        gameState.spots[i][j].buffs.get(cursing.id)!.idx! >= 2
+                    ) {
+                        // 3.2 如果idx大于等于2，删除
+                        gameState.spots[i][j].buffs.delete(cursing.id);
+                    }
+                }
             }
             return gameState;
         },
