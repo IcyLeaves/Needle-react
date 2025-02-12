@@ -21,6 +21,8 @@ type Statistic = {
     mBoardAtTheEnd: SpotBoxState[][];
     mIsTargetKilled: boolean;
     mIsAddChancesByWitch: boolean;
+    mIsTargetWasted: boolean;
+    mIsGameOverByGanster: boolean;
 };
 type Achivement = {
     // 成就说明
@@ -77,6 +79,8 @@ function initStatistic(): Statistic {
             mBoardAtTheEnd: [],
             mIsTargetKilled: false,
             mIsAddChancesByWitch: false,
+            mIsTargetWasted: false,
+            mIsGameOverByGanster: false,
         };
         storage = updateCurrentAndHistoryAchivement(initial, true);
     }
@@ -92,6 +96,8 @@ function initStatistic(): Statistic {
         mBoardAtTheEnd: [],
         mIsTargetKilled: false,
         mIsAddChancesByWitch: false,
+        mIsTargetWasted: false,
+        mIsGameOverByGanster: false,
     };
 }
 // check whether achivement is acquired
