@@ -3,7 +3,7 @@ import { SpotBoxState, SpotVisible } from '../../../models/spot';
 import { Deck } from '../../../utils/draw';
 import { nearFour } from '../../../utils/graph';
 import MoneyBag from '../../buffs/fortune';
-import { GameState, SearchAllSpots } from '../../public/game';
+import { GameState, GameStatus, SearchAllSpots } from '../../public/game';
 
 const Fortune = (): Role => {
     return {
@@ -14,8 +14,7 @@ const Fortune = (): Role => {
         type: RolesType.LIGHT,
         onRevealed: (gameState: GameState, x: number, y: number) => {
             let currBox = gameState.spots[x][y];
-            // 钱袋子
-            if (currBox.buffs.has(MoneyBag().id)) {
+            if (gameState.status === GameStatus.EARNING) {
                 //1. 把相邻的人都可见
                 let nears = nearFour(
                     x,
@@ -33,6 +32,11 @@ const Fortune = (): Role => {
                     gameState.spots[near.x][near.y].visible =
                         SpotVisible.VISIBLE;
                 }
+                gameState.status = GameStatus.REVEALING;
+            }
+            // 钱袋子
+            if (currBox.buffs.has(MoneyBag().id)) {
+                gameState.status = GameStatus.EARNING;
             }
             // 赏金猎人
             if (currBox.role.id == Fortune().id) {

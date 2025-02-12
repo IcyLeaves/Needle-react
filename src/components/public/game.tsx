@@ -58,6 +58,7 @@ type GameState = {
 export enum GameStatus {
     REVEALING = 'revealing',
     SHOOTING = 'shooting',
+    EARNING = 'earning',
 }
 const SearchAllSpots = (
     gameState: GameState,

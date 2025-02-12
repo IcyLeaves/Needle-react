@@ -72,6 +72,7 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
         //可以正常进入点击吗？
         switch (gameState.status) {
             case GameStatus.REVEALING:
+            case GameStatus.EARNING:
                 // 进入点击
                 for (let i = 0; i < gameState.spots.length; i++) {
                     for (let j = 0; j < gameState.spots[i].length; j++) {
@@ -150,12 +151,10 @@ const SpotBox: React.FC<SpotBoxProps> = props => {
                             );
                         }
                     }
+                    gameState = Fortune().onRevealed!(gameState, x, y);
                     if (role.onRevealed) {
                         //揭露时
                         gameState = role.onRevealed(gameState, x, y);
-                    }
-                    if (state.role.id != Fortune().id) {
-                        gameState = Fortune().onRevealed!(gameState, x, y);
                     }
                 }
                 break;
