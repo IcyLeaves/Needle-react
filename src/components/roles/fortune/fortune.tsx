@@ -9,7 +9,7 @@ const Fortune = (): Role => {
     return {
         id: 'fortune',
         name: '赏金猎人',
-        description: '使一个还未现身的角色获得💰',
+        description: '使一个还未现身的光明势力角色获得💰',
         color: '#e64a19',
         type: RolesType.LIGHT,
         onRevealed: (gameState: GameState, x: number, y: number) => {
@@ -44,7 +44,10 @@ const Fortune = (): Role => {
                 let hiddens: SpotBoxState[] = SearchAllSpots(
                     gameState,
                     spot => {
-                        return spot.visible != SpotVisible.REVEALED;
+                        return (
+                            spot.visible != SpotVisible.REVEALED &&
+                            spot.role.type == RolesType.LIGHT
+                        );
                     },
                 );
                 // 2. 随机选一个
@@ -60,6 +63,7 @@ const Fortune = (): Role => {
                 ) {
                     chosen = deck.draw();
                 }
+                if (!chosen) return gameState;
                 // 3. let him acquire money bag
                 chosen.buffs.set(MoneyBag().id, MoneyBag());
                 chosen.buffs.get(MoneyBag().id)!.idx = 0;
